@@ -11,9 +11,16 @@
 ## Features
 
 - **Toggle Desktop Icons**: Double-click anywhere on the desktop to show or hide desktop icons.
+- **OLED Friendly:** Ideal for OLED screens to avoid static image retention.
 - **User-Friendly**: Intuitive and easy to use.
 - **Lightweight**: Minimal system resources required.
 - **Portable**: No installation necessary, just run the executable.
+
+## Why Use Toggle Desktop Icons?
+
+- **Enhanced Productivity:** Remove distractions from your desktop and focus on what matters.
+- **Clean Aesthetic:** Enjoy a sleek and clean desktop view with no icons obstructing your wallpaper.
+- **Prevent Burn-In:** Protect your OLED screen from static image burn-in by hiding desktop icons.
 
 ## Requirements
 
@@ -33,7 +40,7 @@
 3. **Exit**: To exit the application, right-click the system tray icon and select "Exit".
 
 ## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+### [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+This project is licensed under the BSD 3-Clause License. See the [LICENSE](LICENSE) file for details.
 
 ---
