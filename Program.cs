@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Drawing;
 using static NativeMethods;
 using Point = NativeMethods.Point;
 using Timer = System.Windows.Forms.Timer;
@@ -20,7 +19,7 @@ namespace Mirador
         private static int _lastClickTime;
         private static Point _lastClickPosition;
         private static readonly int DoubleClickTime = GetDoubleClickTime(); // System double-click time
-        private static readonly int DoubleClickDistance = GetSystemMetrics(SystemMetric.SM_CXDOUBLECLK);
+        private static readonly int DoubleClickDistance = GetSystemMetrics(SystemMetric.SM_CXDOUBLECLK); // System double-click distance
 
         [STAThread]
         static void Main()
@@ -36,24 +35,27 @@ namespace Mirador
 
         private static void OnApplicationExit(object sender, EventArgs e)
         {
-            UnhookWindowsHookEx(_hook);
-            _notifyIcon.Visible = false;
+            UnhookWindowsHookEx(_hook); // Unhook when the application exits
+            _notifyIcon.Visible = false; // Hide the tray icon
         }
 
+        // Initialize the low-level mouse hook
         private static void InitializeHook()
         {
             _hookProc = new HookProc(HookFunction);
             _hook = SetWindowsHookEx(HookType.WH_MOUSE_LL, _hookProc, IntPtr.Zero, 0);
         }
 
+        // Initialize a timer to periodically check for messages
         private static void InitializeTimer()
         {
             _timer = new Timer();
-            _timer.Interval = 10; // Set an appropriate interval
+            _timer.Interval = 10;
             _timer.Tick += OnTimerTick;
             _timer.Start();
         }
 
+        // Timer tick event to process messages
         private static void OnTimerTick(object sender, EventArgs e)
         {
             MSG msg;
@@ -64,6 +66,7 @@ namespace Mirador
             }
         }
 
+        // Hook function to process mouse events
         private static IntPtr HookFunction(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && MouseMessages.WM_LBUTTONUP == (MouseMessages)wParam)
@@ -102,6 +105,7 @@ namespace Mirador
             return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
 
+        // Initialize system tray icon and context menu
         private static void InitializeTrayIcon()
         {
             _notifyIcon = new NotifyIcon();
