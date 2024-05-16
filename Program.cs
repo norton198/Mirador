@@ -90,6 +90,9 @@ namespace Mirador
                         else
                         {
                             Console.WriteLine("Double click on desktop but not on an icon.");
+                            // Show visual flash effect
+                            ShowFlashOverlay();
+                            // Toggle desktop icons
                             DesktopUtilities.ToggleIcons();
                         }
                     }
@@ -137,5 +140,22 @@ namespace Mirador
                 UseShellExecute = true
             });
         }
+
+        // Screen flash effect
+        private static void ShowFlashOverlay()
+        {
+            OverlayForm overlay = new OverlayForm();
+            overlay.Show();
+
+            Timer flashTimer = new Timer();
+            flashTimer.Interval = 100;
+            flashTimer.Tick += (s, e) =>
+            {
+                flashTimer.Stop();
+                overlay.Close();
+            };
+            flashTimer.Start();
+        }
+
     }
 }
