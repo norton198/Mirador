@@ -1,10 +1,11 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
+using System.Drawing;
 using static NativeMethods;
 using Point = NativeMethods.Point;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Mirador
 {
@@ -12,10 +13,10 @@ namespace Mirador
     {
         private static NotifyIcon _notifyIcon;
         private static ContextMenuStrip _contextMenu;
+        private static Timer _timer;
 
         private static IntPtr _hook = IntPtr.Zero;
         private static HookProc _hookProc;
-        private static volatile bool _running = true;
         private static int _lastClickTime;
         private static Point _lastClickPosition;
         private static readonly int DoubleClickTime = GetDoubleClickTime(); // System double-click time
@@ -25,46 +26,42 @@ namespace Mirador
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-
             InitializeTrayIcon();
-
-            Thread hookThread = new Thread(HookThread);
-            hookThread.Start();
+            InitializeHook();
+            InitializeTimer();
 
             Application.ApplicationExit += OnApplicationExit;
             Application.Run();
-
-            _running = false;
-            hookThread.Join(); // Ensure the hook thread exits cleanly
-            UnhookWindowsHookEx(_hook); // Unhook after the thread finishes
         }
 
         private static void OnApplicationExit(object sender, EventArgs e)
         {
-            _running = false;
             UnhookWindowsHookEx(_hook);
             _notifyIcon.Visible = false;
         }
 
-        private static void HookThread()
+        private static void InitializeHook()
         {
             _hookProc = new HookProc(HookFunction);
             _hook = SetWindowsHookEx(HookType.WH_MOUSE_LL, _hookProc, IntPtr.Zero, 0);
+        }
 
+        private static void InitializeTimer()
+        {
+            _timer = new Timer();
+            _timer.Interval = 10; // Set an appropriate interval
+            _timer.Tick += OnTimerTick;
+            _timer.Start();
+        }
+
+        private static void OnTimerTick(object sender, EventArgs e)
+        {
             MSG msg;
-            while (_running)
+            while (PeekMessage(out msg, IntPtr.Zero, 0, 0, 1))
             {
-                if (PeekMessage(out msg, IntPtr.Zero, 0, 0, 1))
-                {
-                    TranslateMessage(ref msg);
-                    DispatchMessage(ref msg);
-                }
-                else
-                {
-                    Thread.Sleep(10); // Sleep for 10 milliseconds if no message is found
-                }
+                TranslateMessage(ref msg);
+                DispatchMessage(ref msg);
             }
-            UnhookWindowsHookEx(_hook);
         }
 
         private static IntPtr HookFunction(int nCode, IntPtr wParam, IntPtr lParam)
@@ -74,7 +71,6 @@ namespace Mirador
                 MSLLHOOKSTRUCT mouseHookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
                 int currentTime = Environment.TickCount;
                 Point currentPos = mouseHookStruct.pt;
-                System.Drawing.Point currentPosAsRectangle = new System.Drawing.Point(mouseHookStruct.pt.x, mouseHookStruct.pt.y);
 
                 if (currentTime - _lastClickTime <= DoubleClickTime &&
                     Math.Abs(currentPos.x - _lastClickPosition.x) <= DoubleClickDistance &&
@@ -105,6 +101,7 @@ namespace Mirador
             }
             return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
         }
+
         private static void InitializeTrayIcon()
         {
             _notifyIcon = new NotifyIcon();
