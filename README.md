@@ -16,7 +16,7 @@
 - **Lightweight**: Minimal system resources required.
 - **Portable**: No installation necessary, just run the executable.
 
-## Why Use Toggle Desktop Icons?
+## Why Use Mirador?
 
 - **Enhanced Productivity:** Remove distractions from your desktop and focus on what matters.
 - **Clean Aesthetic:** Enjoy a sleek and clean desktop view with no icons obstructing your wallpaper.
