@@ -27,11 +27,61 @@ public static class NativeMethods
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     public static extern int GetSystemMetrics(SystemMetric smIndex);
+
+    //Taskbar Related
+
+    [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+    public static extern uint SHAppBarMessage(uint dwMessage, ref APPBARDATA pData);
+
+    public enum TaskbarConstants
+    {
+        ABS_AUTHOHIDE = 0x1,
+        ABS_ALWAYSONTOP = 0x2,
+        ABM_GETSTATE = 0x4,
+        ABM_SETSTATE = 0xA,
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct APPBARDATA
+    {
+        public uint cbSize;
+        public IntPtr hWnd;
+        public uint uCallbackMessage;
+        public uint uEdge;
+        public RECT rc;
+        public int lParam;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+    }
+
+    public static int GetTaskbarState()
+    {
+        APPBARDATA data = new APPBARDATA();
+        data.cbSize = (uint)Marshal.SizeOf(data);
+        return (int)SHAppBarMessage((uint)TaskbarConstants.ABM_GETSTATE, ref data);
+    }
+
+    public static void SetTaskbarState(int state)
+    {
+        APPBARDATA data = new APPBARDATA();
+        data.cbSize = (uint)Marshal.SizeOf(data);
+        data.lParam = state;
+        SHAppBarMessage((uint)TaskbarConstants.ABM_SETSTATE, ref data);
+    }
+
     public enum SystemMetric
     {
         SM_CXDOUBLECLK = 36,
         SM_CYDOUBLECLK = 37
     }
+
     public struct MSG
     {
         public IntPtr hwnd;
