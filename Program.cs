@@ -1,154 +1,173 @@
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static NativeMethods;
-using Point = NativeMethods.Point;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Mirador
 {
-    internal static class Program
+    internal class Program
     {
-        private static NotifyIcon _notifyIcon;
-        private static ContextMenuStrip _contextMenu;
-        private static Timer _timer;
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
 
-        private static IntPtr _hook = IntPtr.Zero;
-        private static HookProc _hookProc;
+        public static RawInput rawInput;
+        private static NotifyIcon notifyIcon;
+
         private static int _lastClickTime;
         private static Point _lastClickPosition;
         private static readonly int DoubleClickTime = GetDoubleClickTime(); // System double-click time
         private static readonly int DoubleClickDistance = GetSystemMetrics(SystemMetric.SM_CXDOUBLECLK); // System double-click distance
 
+        private const string UniqueIdentifier = "M1R4D0R-3RGO-3LFN-I99B-1NT1M3-1S0Z";
+
         [STAThread]
-        static void Main()
+        public static void Main()
         {
-            ApplicationConfiguration.Initialize();
-            InitializeTrayIcon();
-            InitializeHook();
-            InitializeTimer();
+            AllocConsole();
+            bool createdNew;
+            var waitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, UniqueIdentifier, out createdNew);
+
+            if (!createdNew)
+            {
+                Console.WriteLine("Another instance is already running. Exiting new instance.");
+                return;
+            }
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            // Initialize Tray Icon
+            TrayMenu.InitializeTrayIcon();
+
+            // Create a hidden form to handle raw input
+            var form = new HiddenForm();
+            rawInput = new RawInput();
+            rawInput.RegisterRawMouseInput(form.Handle);
+            rawInput.MouseMoved += RawInput_MouseMoved;
+            rawInput.LeftButtonUp += RawInput_LeftButtonUp;
 
             Application.ApplicationExit += OnApplicationExit;
             Application.Run();
         }
 
-        private static void OnApplicationExit(object sender, EventArgs e)
+        private static void RawInput_MouseMoved(object sender, RawMouseEventArgs e)
         {
-            UnhookWindowsHookEx(_hook); // Unhook when the application exits
-            _notifyIcon.Visible = false; // Hide the tray icon
+            OnMouseMove();
         }
 
-        // Initialize the low-level mouse hook
-        private static void InitializeHook()
+        private static void RawInput_LeftButtonUp(object sender, RawMouseEventArgs e)
         {
-            _hookProc = new HookProc(HookFunction);
-            _hook = SetWindowsHookEx(HookType.WH_MOUSE_LL, _hookProc, IntPtr.Zero, 0);
+            OnMouseButtonUp(e);
         }
 
-        // Initialize a timer to periodically check for messages
-        private static void InitializeTimer()
+        private static void OnMouseButtonUp(RawMouseEventArgs e)
         {
-            _timer = new Timer();
-            _timer.Interval = 10;
-            _timer.Tick += OnTimerTick;
-            _timer.Start();
-        }
+            Console.WriteLine("Left button up.");
+            int currentTime = Environment.TickCount;
+            Point currentPos = new Point(e.X, e.Y);
 
-        // Timer tick event to process messages
-        private static void OnTimerTick(object sender, EventArgs e)
-        {
-            MSG msg;
-            while (PeekMessage(out msg, IntPtr.Zero, 0, 0, 1))
+            if (currentTime - _lastClickTime <= DoubleClickTime &&
+                Math.Abs(currentPos.X - _lastClickPosition.X) <= DoubleClickDistance &&
+                Math.Abs(currentPos.Y - _lastClickPosition.Y) <= DoubleClickDistance)
             {
-                TranslateMessage(ref msg);
-                DispatchMessage(ref msg);
-            }
-        }
-
-        // Hook function to process mouse events
-        private static IntPtr HookFunction(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode >= 0 && MouseMessages.WM_LBUTTONUP == (MouseMessages)wParam)
-            {
-                MSLLHOOKSTRUCT mouseHookStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-                int currentTime = Environment.TickCount;
-                Point currentPos = mouseHookStruct.pt;
-
-                if (currentTime - _lastClickTime <= DoubleClickTime &&
-                    Math.Abs(currentPos.x - _lastClickPosition.x) <= DoubleClickDistance &&
-                    Math.Abs(currentPos.y - _lastClickPosition.y) <= DoubleClickDistance)
+                if (DesktopUtilities.IsDesktopInFocus())
                 {
-                    if (DesktopUtilities.IsDesktopInFocus())
-                    {
-                        Console.WriteLine("Double click detected [ON DESKTOP].");
+                    Console.WriteLine("Double click detected [ON DESKTOP].");
 
-                        if (DesktopUtilities.IsAnyDesktopIconSelected())
-                        {
-                            Console.WriteLine("Double click on an icon.");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Double click on desktop but not on an icon.");
-                            // Show visual flash effect
-                            ShowFlashOverlay();
-                            // Toggle desktop icons
-                            DesktopUtilities.ToggleIcons();
-                        }
+                    if (DesktopUtilities.IsAnyDesktopIconSelected())
+                    {
+                        Console.WriteLine("Double click on an icon.");
                     }
                     else
                     {
-                        Console.WriteLine("Double click detected [OUTSIDE].");
+                        Console.WriteLine("Double click on desktop but not on an icon.");
+                        ShowFlashOverlay(EffectArea.Desktop);
+                        DesktopUtilities.ToggleIcons();
                     }
                 }
-
-                _lastClickTime = currentTime;
-                _lastClickPosition = currentPos;
+                else if (Taskbar.IsTaskbarInFocus())
+                {
+                    if (Taskbar.IsTaskbarVisible())
+                    {
+                        ShowFlashOverlay(EffectArea.Taskbar, 25);
+                        Taskbar.HideShowTaskbar(true);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Double click detected [OUTSIDE].");
+                }
             }
-            return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+
+            _lastClickTime = currentTime;
+            _lastClickPosition = currentPos;
         }
 
-        // Initialize system tray icon and context menu
-        private static void InitializeTrayIcon()
+        private static void OnMouseMove()
         {
-            _notifyIcon = new NotifyIcon();
-            _contextMenu = new ContextMenuStrip();
-
-            var aboutMenuItem = new ToolStripMenuItem("About", null, OnAboutMenuItemClick);
-            _contextMenu.Items.Add(aboutMenuItem);
-
-            var exitMenuItem = new ToolStripMenuItem("Exit", null, OnExitMenuItemClick);
-            _contextMenu.Items.Add(exitMenuItem);
-
-            _notifyIcon.Text = "Mirador";
-            _notifyIcon.Icon = Properties.Resources.Tray_Icon;
-            _notifyIcon.ContextMenuStrip = _contextMenu;
-            _notifyIcon.Visible = true;
-        }
-
-        private static void OnExitMenuItemClick(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private static void OnAboutMenuItemClick(object sender, EventArgs e)
-        {
-            string githubUrl = "https://github.com/norton198/Mirador";
-            Process.Start(new ProcessStartInfo
+            if (NativeMethods.GetCursorPos(out Point point))
             {
-                FileName = githubUrl,
-                UseShellExecute = true
-            });
+                Point currentPos = new Point(point.X, point.Y);
+                Console.WriteLine("Mouse moved to: " + currentPos.X + ", " + currentPos.Y);
+                if (!Taskbar.IsTaskbarVisible())
+                {
+                    ThreadPool.QueueUserWorkItem(state =>
+                    {
+                        Taskbar.TriggerUnhideRelativeToMousePosition(currentPos, Taskbar.Corner.RightBottom);
+                    });
+                }
+            }
         }
 
-        // Screen flash effect
-        private static void ShowFlashOverlay()
+        private static void OnApplicationExit(object sender, EventArgs e)
         {
-            OverlayForm overlay = new OverlayForm();
+            notifyIcon.Visible = false;
+        }
+
+        // Desktop & taskbar flash effect
+        public enum EffectArea
+        {
+            Desktop,
+            Taskbar
+        }
+
+        private static void ShowFlashOverlay(EffectArea mode, int interval = 50, float opacity = 0.25f)
+        {
+            OverlayForm overlay = new OverlayForm
+            {
+                FormBorderStyle = FormBorderStyle.None,
+                StartPosition = FormStartPosition.Manual,
+                TopMost = true,
+                BackColor = Color.White,
+                Opacity = opacity,
+                ShowInTaskbar = false
+            };
+
+            if (mode == EffectArea.Desktop)
+            {
+                overlay.Bounds = Screen.PrimaryScreen.WorkingArea;
+            }
+            else if (mode == EffectArea.Taskbar)
+            {
+                var taskbarRect = Taskbar.GetTaskbarPositionAndSize();
+                if (taskbarRect.HasValue)
+                {
+                    overlay.Bounds = taskbarRect.Value;
+                }
+                else
+                {
+                    overlay.Bounds = Screen.PrimaryScreen.WorkingArea;
+                }
+            }
+
             overlay.Show();
 
             Timer flashTimer = new Timer();
-            flashTimer.Interval = 100;
+            flashTimer.Interval = interval;
             flashTimer.Tick += (s, e) =>
             {
                 flashTimer.Stop();
@@ -157,5 +176,26 @@ namespace Mirador
             flashTimer.Start();
         }
 
+        private static void Exit(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+    }
+
+    public class HiddenForm : Form
+    {
+        public HiddenForm()
+        {
+            this.ShowInTaskbar = false;
+            this.WindowState = FormWindowState.Minimized;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Load += (s, e) => this.Hide();
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            Program.rawInput.ProcessInputMessage(ref m);
+            base.WndProc(ref m);
+        }
     }
 }

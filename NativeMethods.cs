@@ -17,6 +17,9 @@ public static class NativeMethods
     [DllImport("user32.dll")]
     public static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin,uint wMsgFilterMax);
+
     [DllImport("user32.dll")]
     public static extern bool TranslateMessage(ref MSG lpMsg);
 
@@ -92,15 +95,11 @@ public static class NativeMethods
         public Point pt;
     }
 
-    public struct Point
-    {
-        public int x;
-        public int y;
-    }
     public enum MouseMessages
     {
         WM_LBUTTONDOWN = 0x0201,
-        WM_LBUTTONUP = 0x0202
+        WM_LBUTTONUP = 0x0202,
+        WM_MOUSEMOVE = 0x0200,
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -182,7 +181,9 @@ public static class NativeMethods
 
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
     public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool GetCursorPos(out Point lpPoint);
 
     // ListView messages
     public const uint LVM_FIRST = 0x1000;
