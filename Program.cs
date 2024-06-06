@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Devices;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,9 +47,24 @@ namespace Mirador
             // Create a hidden form to handle raw input
             var form = new HiddenForm();
             rawInput = new RawInput();
-            rawInput.RegisterRawMouseInput(form.Handle);
+            rawInput.RegisterRawInput(form.Handle);
             rawInput.MouseMoved += RawInput_MouseMoved;
             rawInput.LeftButtonUp += RawInput_LeftButtonUp;
+
+            /*
+             * 
+            Feeling like testing tray area detection today, might delete later
+
+            Rectangle? trayArea = Taskbar.GetTrayArea();
+            if (trayArea.HasValue)
+            {
+                Taskbar.HighlightTrayArea(trayArea.Value);
+            }
+            else
+            {
+                Console.WriteLine("Could not determine tray area.");
+            }
+            */
 
             Application.ApplicationExit += OnApplicationExit;
             Application.Run();
@@ -68,8 +84,12 @@ namespace Mirador
         {
             Console.WriteLine("Left button up.");
             int currentTime = Environment.TickCount;
-            Point currentPos = new Point(e.X, e.Y);
 
+            NativeMethods.GetCursorPos(out Point point);
+
+            Point currentPos = new Point(point.X, point.Y);
+
+            Console.WriteLine("Current position: " + currentPos.X + ", " + currentPos.Y);
             if (currentTime - _lastClickTime <= DoubleClickTime &&
                 Math.Abs(currentPos.X - _lastClickPosition.X) <= DoubleClickDistance &&
                 Math.Abs(currentPos.Y - _lastClickPosition.Y) <= DoubleClickDistance)
@@ -91,7 +111,12 @@ namespace Mirador
                 }
                 else if (Taskbar.IsTaskbarInFocus())
                 {
-                    if (Taskbar.IsTaskbarVisible())
+
+                    bool isClickInTray = Taskbar.IsClickInTaskbarTrayArea(currentPos.X, currentPos.Y);
+
+                    Console.WriteLine("Click in tray area: " + isClickInTray);
+
+                    if (Taskbar.IsTaskbarVisible() && !Taskbar.IsClickInTaskbarTrayArea(currentPos.X, currentPos.Y))
                     {
                         ShowFlashOverlay(EffectArea.Taskbar, 25);
                         Taskbar.HideShowTaskbar(true);

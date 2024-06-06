@@ -1,6 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using static NativeMethods;
 using Point = System.Drawing.Point;
+using System.Windows.Automation;
+
 namespace Mirador
 {
     internal class Taskbar
@@ -63,6 +65,92 @@ namespace Mirador
             BothBottom,
             EntireBottom
         }
+
+        public static bool IsClickInTaskbarTrayArea(int x, int y)
+        {
+            try
+            {
+                Rectangle? trayArea = GetTrayArea();
+                if (trayArea.HasValue)
+                {
+                    // Check if the click is within the tray area
+                    Rectangle rect = trayArea.Value;
+                    Console.WriteLine($"Tray Area: Left={rect.Left}, Top={rect.Top}, Right={rect.Right}, Bottom={rect.Bottom}");
+                    Console.WriteLine($"Click Coordinates: X={x}, Y={y}");
+
+                    bool isInTrayArea = x >= rect.Left && x <= rect.Right && y >= rect.Top && y <= rect.Bottom;
+                    Console.WriteLine($"Is In Tray Area: {isInTrayArea}");
+                    return isInTrayArea;
+                }
+                else
+                {
+                    throw new InvalidOperationException("Could not determine tray area.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        // This works with the new taskbar in Windows 11
+        public static Rectangle? GetTrayArea()
+        {
+            // Find the desktop element
+            AutomationElement desktop = AutomationElement.RootElement;
+
+            // Locate the taskbar
+            AutomationElement taskbar = FindElementByClassName(desktop, "Shell_TrayWnd");
+            if (taskbar == null)
+            {
+                throw new InvalidOperationException("Could not find taskbar window.");
+            }
+
+            // Locate the system tray frame within the taskbar
+            AutomationElement systemTrayFrame = FindElementByClassName(taskbar, "TrayNotifyWnd");
+            if (systemTrayFrame == null)
+            {
+                throw new InvalidOperationException("Could not find TrayNotifyWnd area.");
+            }
+
+            // Get the bounding rectangle of the TrayNotifyWnd
+            System.Windows.Rect rect = systemTrayFrame.Current.BoundingRectangle;
+            return new Rectangle((int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
+        }
+
+        private static AutomationElement FindElementByClassName(AutomationElement parent, string className)
+        {
+            Condition condition = new PropertyCondition(AutomationElement.ClassNameProperty, className);
+            return parent.FindFirst(TreeScope.Descendants, condition);
+        }
+
+        public static void HighlightTrayArea(Rectangle trayArea)
+        {
+            Form highlightForm = new Form
+            {
+                FormBorderStyle = FormBorderStyle.None,
+                BackColor = Color.Red,
+                Opacity = 0.5,
+                ShowInTaskbar = false,
+                TopMost = true,
+                StartPosition = FormStartPosition.Manual,
+                Location = trayArea.Location,
+                Size = trayArea.Size
+            };
+
+            // Make the form click-through
+            int initialStyle = GetWindowLong(highlightForm.Handle, -20);
+            SetWindowLong(highlightForm.Handle, -20, initialStyle | 0x80000 | 0x20);
+
+            Application.Run(highlightForm);
+        }
+
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         public static void TriggerUnhideRelativeToMousePosition(Point mousePosition, Corner detectionMode = Corner.EntireBottom)
         {
