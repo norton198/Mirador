@@ -34,7 +34,7 @@
 ### 6. Hide/Unhide Using a Shortcut Key Press (Shift + Tab)
 - **Implementation:** Assign the key combination `Shift + Tab` to toggle the taskbar's visibility.
 - **Considerations:** Ensure this combination avoids conflicts with existing shortcuts and allows easy toggling without interfering with other tasks.
-- **Status:** ❌ Not Started
+- **Status:** ✔️ Implemented ⚠️ Experimental
 
 ## Legend
 - ✔️ Implemented
