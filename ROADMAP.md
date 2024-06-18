@@ -9,7 +9,7 @@
 ### 1. Hide the Taskbar with a Double-Click
 - **Implementation:** Detect a double-click event on the taskbar and initiate the hiding.
 - **Considerations:** Ensure the double-click is distinguished from single clicks to avoid accidental hides.
-- **Status:** ✔️ Implemented ⚠️ Experimental
+- **Status:** ✔️ Implemented
 
 ### 2. Unhide the Taskbar by Dragging Upwards from the Bottom of the Screen
 - **Implementation:** Add logic to monitor drag events from the bottom edge of the screen and unhide the taskbar when an upward drag is detected.
@@ -19,7 +19,7 @@
 ### 3. Unhide the Taskbar When the Cursor is Positioned in the Bottom Corners of the Screen
 - **Implementation:** Track cursor position and unhide the taskbar when the cursor is in predefined corner areas at the bottom of the screen.
 - **Considerations:** Define the exact dimensions of the corners to ensure a balance between usability and accidental activation.
-- **Status:** ✔️ Implemented ⚠️ Experimental
+- **Status:** ✔️ Implemented ⚠️
 
 ### 4. Temporarily Show the Taskbar When There Are Notifications
 - **Implementation:** Monitor system notifications and temporarily display the taskbar to alert users.
