@@ -121,10 +121,43 @@
   <data name="Tray_Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tray_Icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Tray_Menu_Bar_Light" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tray_Menu_Bar_Light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Tray_Menu_Bar_Dark" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tray_Menu_Bar_Dark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Tray_Menu_Bar_Light" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Tray_Menu_Bar_Light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="mirador_settings_form_background1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mirador_settings_form_background1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BothCornersIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BothCornersIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CursorIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CursorIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DesktopIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DesktopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DoubleClickIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DoubleClickIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EntireBarIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EntireBarIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="KeyIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KeyIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LeftCornerIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LeftCornerIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RightCornerIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RightCornerIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TaskbarIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TaskbarIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AutoHideIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AutoHideIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

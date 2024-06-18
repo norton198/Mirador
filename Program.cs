@@ -25,6 +25,10 @@ namespace Mirador
 
         private const string UniqueIdentifier = "M1R4D0R-3RGO-3LFN-I99B-1NT1M3-1S0Z";
 
+        private static Timer _autoHideTaskbarTimer;
+        private static readonly int TimerInterval = 1000; // Interval in milliseconds
+        private bool autohideTaskbarEnabled = Properties.Settings.Default.AutoHide;
+
         [STAThread]
         public static void Main()
         {
@@ -66,6 +70,22 @@ namespace Mirador
             }
             */
 
+            // Not sure how i feel about this yet
+            // Initialize and start the auto-hide taskbar timer
+            _autoHideTaskbarTimer = new Timer();
+            _autoHideTaskbarTimer.Interval = TimerInterval;
+            _autoHideTaskbarTimer.Tick += (sender, args) =>
+            {
+                if (Taskbar.IsTaskbarVisible())
+                {
+                    NativeMethods.GetCursorPos(out Point point);
+                    Point currentPos = new Point(point.X, point.Y);
+                    Taskbar.AutoHideTaskbar(currentPos);
+                }
+            };
+            _autoHideTaskbarTimer.Start();
+            Console.WriteLine("Auto-hide taskbar timer started.");
+
             Application.ApplicationExit += OnApplicationExit;
             Application.Run();
         }
@@ -96,7 +116,7 @@ namespace Mirador
             {
                 if (DesktopUtilities.IsDesktopInFocus())
                 {
-                    Console.WriteLine("Double click detected [ON DESKTOP].");
+                    Console.WriteLine("Double click detected on desktop.");
 
                     if (DesktopUtilities.IsAnyDesktopIconSelected())
                     {
@@ -124,9 +144,13 @@ namespace Mirador
                 }
                 else
                 {
-                    Console.WriteLine("Double click detected [OUTSIDE].");
+                    Console.WriteLine("Double click detected outside.");
                 }
             }
+
+            // Check if the click was outside the settings form
+            // Close the settings form if it's open
+            TrayMenu.CheckClickOutsideForm(currentPos);
 
             _lastClickTime = currentTime;
             _lastClickPosition = currentPos;
@@ -137,12 +161,12 @@ namespace Mirador
             if (NativeMethods.GetCursorPos(out Point point))
             {
                 Point currentPos = new Point(point.X, point.Y);
-                Console.WriteLine("Mouse moved to: " + currentPos.X + ", " + currentPos.Y);
+                //Console.WriteLine("Mouse moved to: " + currentPos.X + ", " + currentPos.Y);
                 if (!Taskbar.IsTaskbarVisible())
                 {
                     ThreadPool.QueueUserWorkItem(state =>
                     {
-                        Taskbar.TriggerUnhideRelativeToMousePosition(currentPos, Taskbar.Corner.RightBottom);
+                        Taskbar.TriggerUnhideRelativeToMousePosition(currentPos);
                     });
                 }
             }
@@ -153,13 +177,14 @@ namespace Mirador
             notifyIcon.Visible = false;
         }
 
-        // Desktop & taskbar flash effect
+        // Desktop & taskbar flash effect areas
         public enum EffectArea
         {
             Desktop,
             Taskbar
         }
 
+        // Show a flash overlay effect on the desktop or taskbar
         private static void ShowFlashOverlay(EffectArea mode, int interval = 50, float opacity = 0.25f)
         {
             OverlayForm overlay = new OverlayForm
@@ -207,6 +232,8 @@ namespace Mirador
         }
     }
 
+    // Used to handle raw input messages
+    // Might not be necessary
     public class HiddenForm : Form
     {
         public HiddenForm()

@@ -54,9 +54,10 @@ namespace Mirador
 
         private const int EDGE_THRESHOLD = 10;
         private const int TIME_DELAY = 500; 
-        private System.Timers.Timer _timer;
-        private Point _lastMousePosition;
-        private DateTime _lastMouseMoveTime;
+        private static Point _lastMousePosition;
+        private static DateTime _lastMouseMoveTime;
+        private static System.Timers.Timer _autoHideTimer;
+        private const int CHECK_INTERVAL = 100; // Check every 100 ms
 
         public enum Corner
         {
@@ -125,6 +126,7 @@ namespace Mirador
             return parent.FindFirst(TreeScope.Descendants, condition);
         }
 
+        // Testing purposes only, might delete later
         public static void HighlightTrayArea(Rectangle trayArea)
         {
             Form highlightForm = new Form
@@ -152,43 +154,225 @@ namespace Mirador
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-        public static void TriggerUnhideRelativeToMousePosition(Point mousePosition, Corner detectionMode = Corner.EntireBottom)
+        private static bool _isAutoHideTaskbarRunning = false;
+        private static readonly object _lockObject = new object();
+
+        public static void AutoHideTaskbar(Point mousePosition)
+        {
+            lock (_lockObject)
+            {
+                if (_isAutoHideTaskbarRunning)
+                {
+                    Console.WriteLine("AutoHideTaskbar is already running. Exiting to prevent multiple calls.");
+                    return;
+                }
+                _isAutoHideTaskbarRunning = true;
+            }
+
+            Console.WriteLine($"AutoHideTaskbar called with mousePosition: {mousePosition}");
+
+            try
+            {
+                Rectangle? taskbarRect = GetTaskbarPositionAndSize();
+                Console.WriteLine($"Taskbar position and size: {taskbarRect}");
+
+                Console.WriteLine($"Should hide taskbar: {CanHideTaskbar(mousePosition, taskbarRect)}");
+
+                if (CanHideTaskbar(mousePosition, taskbarRect))
+                {
+                    if (_autoHideTimer == null)
+                    {
+                        _autoHideTimer = new System.Timers.Timer(CHECK_INTERVAL);
+                        Console.WriteLine($"Auto-hide timer created with interval: {CHECK_INTERVAL}");
+
+                        _autoHideTimer.Elapsed += (sender, args) =>
+                        {
+                            lock (_lockObject)
+                            {
+                                double elapsedMilliseconds = (DateTime.Now - _lastMouseMoveTime).TotalMilliseconds;
+                                Console.WriteLine($"Timer elapsed, elapsed milliseconds since last mouse move: {elapsedMilliseconds}");
+
+                                if (!CanHideTaskbar(mousePosition, taskbarRect)) return;
+
+                                if (elapsedMilliseconds >= Properties.Settings.Default.HideDelay)
+                                {
+                                    if (!CanHideTaskbar(mousePosition, taskbarRect)) return;
+                                    Console.WriteLine("Elapsed time meets hide delay, hiding taskbar.");
+                                    _autoHideTimer.Stop();
+                                    ThreadPool.QueueUserWorkItem(state =>
+                                    {
+                                        HideShowTaskbar(true);
+                                    });
+                                }
+                            }
+                        };
+                    }
+
+                    _lastMouseMoveTime = DateTime.Now;
+                    _autoHideTimer.Start();
+                    Console.WriteLine("Auto-hide timer started.");
+                }
+                else
+                {
+                    _autoHideTimer?.Stop();
+                    Console.WriteLine("Auto-hide timer stopped.");
+                }
+            }
+            finally
+            {
+                lock (_lockObject)
+                {
+                    _isAutoHideTaskbarRunning = false;
+                }
+            }
+        }
+
+        private static bool CanHideTaskbar(Point mousePosition, Rectangle? taskbarRect)
+        {
+
+            return taskbarRect.HasValue &&
+                                     !taskbarRect.Value.Contains(mousePosition) &&
+                                     !IsAnyTaskbarWindowInFocus();
+        }
+
+        public static bool IsAnyTaskbarWindowInFocus()
+        {
+            IntPtr focusedWnd = GetForegroundWindow();
+
+            IntPtr startMenuWnd = FindWindow("Windows.UI.Core.CoreWindow", "Start");
+            IntPtr searchWnd = FindWindow("Windows.UI.Core.CoreWindow", "Search");
+            IntPtr taskViewWnd = FindWindow("Windows.UI.Core.CoreWindow", "Task View");
+            IntPtr notificationCenterWnd = FindWindow("Windows.UI.Core.CoreWindow", "Notification Center");
+            IntPtr pinnedAppsWnd = FindWindow("Shell_TrayWnd", null);
+
+            Console.WriteLine($"Focused window handle: {focusedWnd}");
+            Console.WriteLine($"Start menu window handle: {startMenuWnd}");
+            Console.WriteLine($"Search window handle: {searchWnd}");
+            Console.WriteLine($"Task View window handle: {taskViewWnd}");
+            Console.WriteLine($"Notification Center window handle: {notificationCenterWnd}");
+            Console.WriteLine($"Pinned apps window handle: {pinnedAppsWnd}");
+
+            bool isInFocus = focusedWnd == startMenuWnd ||
+                             focusedWnd == searchWnd ||
+                             focusedWnd == taskViewWnd ||
+                             focusedWnd == notificationCenterWnd ||
+                             focusedWnd == pinnedAppsWnd ||
+                             IsTrayInUse() || IsNotificationCenterInUse();
+
+            Console.WriteLine($"Is any taskbar window in focus: {isInFocus}");
+
+            return isInFocus;
+        }
+
+        // Method to check if the tray is in use on Windows 11
+        private static bool IsTrayInUse()
+        {
+            try
+            {
+                // The handle of the element
+                IntPtr handle = new IntPtr(0x0002033C);
+
+                // Locate the element by its handle
+                AutomationElement element = AutomationElement.FromHandle(handle);
+                if (element == null)
+                {
+                    throw new InvalidOperationException("Could not find element with the specified handle.");
+                }
+
+                // Verify the class name to ensure it's the correct element
+                if (element.Current.ClassName != "Windows.UI.Composition.DesktopWindowContentBridge")
+                {
+                    throw new InvalidOperationException("Found element does not match the expected class name.");
+                }
+
+                // Check if the element is in focus
+                bool isFocused = element.Current.HasKeyboardFocus;
+
+                Console.WriteLine($"Element focus status: {isFocused}");
+
+                return isFocused;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking tray status: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Is notification center in use ?
+        private static bool IsNotificationCenterInUse()
+        {
+            try
+            {
+                // The handle of the element
+                IntPtr handle = new IntPtr(0x00100488);
+
+                // Locate the element by its handle
+                AutomationElement element = AutomationElement.FromHandle(handle);
+                if (element == null)
+                {
+                    throw new InvalidOperationException("Could not find element with the specified handle.");
+                }
+
+                // Verify the class name to ensure it's the correct element
+                if (element.Current.ClassName != "Windows.UI.Core.CoreWindow")
+                {
+                    throw new InvalidOperationException("Found element does not match the expected class name.");
+                }
+
+                // Check if the element is in focus
+                bool isFocused = element.Current.HasKeyboardFocus;
+
+                Console.WriteLine($"Element focus status: {isFocused}");
+
+                return isFocused;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking tray status: {ex.Message}");
+                return false;
+            }
+        }
+
+        public static void TriggerUnhideRelativeToMousePosition(Point mousePosition)
         {
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
             int screenWidth = Screen.PrimaryScreen.Bounds.Width;
 
-            bool isBottom = mousePosition.X >= screenHeight - EDGE_THRESHOLD;
-            bool isLeftCorner = mousePosition.Y <= EDGE_THRESHOLD;
-            bool isRightCorner = mousePosition.X >= screenWidth - EDGE_THRESHOLD;
+            bool isBottom = mousePosition.Y >= screenHeight - EDGE_THRESHOLD; // Checks if the mouse is near the bottom edge
+            bool isLeftCorner = mousePosition.X <= EDGE_THRESHOLD && mousePosition.Y >= screenHeight - EDGE_THRESHOLD; // Checks if the mouse is near the bottom-left corner
+            bool isRightCorner = mousePosition.X >= screenWidth - EDGE_THRESHOLD && mousePosition.Y >= screenHeight - EDGE_THRESHOLD; // Checks if the mouse is near the bottom-right corner
 
             Console.WriteLine($"Mouse Position: {mousePosition.X}, {mousePosition.Y}");
             Console.WriteLine($"Screen Width: {screenWidth}, Screen Height: {screenHeight}");
             Console.WriteLine($"Is Bottom: {isBottom}, Is Left Corner: {isLeftCorner}, Is Right Corner: {isRightCorner}");
 
-            switch (detectionMode)
+            var detectionRegion = Properties.Settings.Default.CursorUnhideRegion;
+
+            switch (detectionRegion)
             {
-                case Corner.RightBottom:
+                case 0: // Corner.RightBottom
                     if (isBottom && isRightCorner)
                     {
                         Console.WriteLine("Triggering unhide for RightBottom corner.");
                         HideShowTaskbar(false);
                     }
                     break;
-                case Corner.LeftBottom:
+                case 1: // Corner.LeftBottom
                     if (isBottom && isLeftCorner)
                     {
                         Console.WriteLine("Triggering unhide for LeftBottom corner.");
                         HideShowTaskbar(false);
                     }
                     break;
-                case Corner.BothBottom:
+                case 2: // Corner.AnyCorner
                     if (isBottom && (isLeftCorner || isRightCorner))
                     {
-                        Console.WriteLine("Triggering unhide for BothBottom corner.");
+                        Console.WriteLine("Triggering unhide for any bottom corner.");
                         HideShowTaskbar(false);
                     }
                     break;
-                case Corner.EntireBottom:
+                case 3: // Corner.EntireBottom
                     if (isBottom)
                     {
                         Console.WriteLine("Triggering unhide for EntireBottom.");

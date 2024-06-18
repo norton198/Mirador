@@ -341,20 +341,20 @@ namespace Mirador
 
                 if (rawInput.header.dwType == RIM_TYPEMOUSE)
                 {
-                    Console.WriteLine("Mouse input received.");
+                    //Console.WriteLine("Mouse input received.");
 
                     int x = rawInput.data.mouse.lLastY;
                     int y = rawInput.data.mouse.lLastY;
                     ushort buttonFlags = rawInput.data.mouse.Union.Struct.usButtonFlags;
                     uint ulButtons = rawInput.data.mouse.Union.ulButtons;
 
-                    Console.WriteLine($"Buttons: {ulButtons}, usButtonFlags: {buttonFlags}");
-                    Console.WriteLine($"usButtonFlags (binary): {Convert.ToString(buttonFlags, 2).PadLeft(16, '0')}");
+                    //Console.WriteLine($"Buttons: {ulButtons}, usButtonFlags: {buttonFlags}");
+                    //Console.WriteLine($"usButtonFlags (binary): {Convert.ToString(buttonFlags, 2).PadLeft(16, '0')}");
 
                     bool leftButtonDown = (buttonFlags & RI_MOUSE_LEFT_BUTTON_DOWN) != 0;
                     bool leftButtonUp = (buttonFlags & RI_MOUSE_LEFT_BUTTON_UP) != 0;
 
-                    Console.WriteLine($"leftButtonDown : {leftButtonDown}, leftButtonUp : {leftButtonUp}");
+                    //Console.WriteLine($"leftButtonDown : {leftButtonDown}, leftButtonUp : {leftButtonUp}");
 
                     if (leftButtonDown)
                     {

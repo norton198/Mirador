@@ -3,27 +3,18 @@
     partial class SettingsForm
     {
         private System.ComponentModel.IContainer components = null;
-        private System.Windows.Forms.CheckBox checkBoxEnableEnhancedTaskbarAutohide;
-        private System.Windows.Forms.CheckBox checkBoxEnableDesktopIconToggle;
+        private System.Windows.Forms.Button btnDesktop;
+        private System.Windows.Forms.Button btnTaskbar;
+        private System.Windows.Forms.TrackBar volumeSlider;
+        private System.Windows.Forms.Label lblVolume;
+        private System.Windows.Forms.Panel bottomBar;
+        private System.Windows.Forms.Label lblDesktop;
+        private System.Windows.Forms.Label lblTaskbar;
+        private System.Windows.Forms.Panel topRowPanel;
 
-        private System.Windows.Forms.GroupBox groupBoxTaskbarAutohideSettings;
-        private System.Windows.Forms.CheckBox checkBoxDoubleClickToHideTaskbar;
-        private System.Windows.Forms.NumericUpDown numericUpDownDoubleClickSensitivity;
-        private System.Windows.Forms.CheckBox checkBoxUnhideByDraggingUpwards;
-        private System.Windows.Forms.NumericUpDown numericUpDownDragThreshold;
-        private System.Windows.Forms.CheckBox checkBoxUnhideByCursorInCorners;
-        private System.Windows.Forms.ComboBox comboBoxCorners;
-        private System.Windows.Forms.NumericUpDown numericUpDownCornerThreshold;
-        private System.Windows.Forms.NumericUpDown numericUpDownCornerDelay;
-        private System.Windows.Forms.CheckBox checkBoxTemporarilyShowForNotifications;
-        private System.Windows.Forms.NumericUpDown numericUpDownNotificationDuration;
-        private System.Windows.Forms.CheckBox checkBoxLockUnlockWithDoubleClick;
-        private System.Windows.Forms.Label labelLockState;
-        private System.Windows.Forms.CheckBox checkBoxHideUnhideWithShortcut;
-        private System.Windows.Forms.TextBox textBoxShortcutKey;
-        private System.Windows.Forms.Button buttonCustomizeShortcut;
-
-        private System.Windows.Forms.Button buttonSave;
+        private bool isTaskbarToggled = false;
+        private bool isCursorToggled = false;
+        private bool isKeyToggled = false;
 
         protected override void Dispose(bool disposing)
         {
@@ -36,237 +27,431 @@
 
         private void InitializeComponent()
         {
-            checkBoxEnableEnhancedTaskbarAutohide = new CheckBox();
-            checkBoxEnableDesktopIconToggle = new CheckBox();
-            groupBoxTaskbarAutohideSettings = new GroupBox();
-            checkBoxDoubleClickToHideTaskbar = new CheckBox();
-            numericUpDownDoubleClickSensitivity = new NumericUpDown();
-            checkBoxUnhideByDraggingUpwards = new CheckBox();
-            numericUpDownDragThreshold = new NumericUpDown();
-            checkBoxUnhideByCursorInCorners = new CheckBox();
-            comboBoxCorners = new ComboBox();
-            numericUpDownCornerThreshold = new NumericUpDown();
-            numericUpDownCornerDelay = new NumericUpDown();
-            checkBoxTemporarilyShowForNotifications = new CheckBox();
-            numericUpDownNotificationDuration = new NumericUpDown();
-            checkBoxLockUnlockWithDoubleClick = new CheckBox();
-            labelLockState = new Label();
-            checkBoxHideUnhideWithShortcut = new CheckBox();
-            textBoxShortcutKey = new TextBox();
-            buttonCustomizeShortcut = new Button();
-            buttonSave = new Button();
-            groupBoxTaskbarAutohideSettings.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownDoubleClickSensitivity).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownDragThreshold).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownCornerThreshold).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownCornerDelay).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownNotificationDuration).BeginInit();
+            btnDesktop = new Button();
+            btnTaskbar = new Button();
+            volumeSlider = new TrackBar();
+            lblVolume = new Label();
+            bottomBar = new Panel();
+            lblDesktop = new Label();
+            lblTaskbar = new Label();
+            topRowPanel = new Panel();
+            btnAutoHide = new Button();
+            lblTip = new Label();
+            panel1 = new Panel();
+            btnDoubleClick = new Button();
+            label1 = new Label();
+            btnCursor = new Button();
+            label2 = new Label();
+            btnKey = new Button();
+            label3 = new Label();
+            panel2 = new Panel();
+            lblShortcut = new Label();
+            btnShortcut = new Button();
+            btnEntireBar = new Button();
+            lblEntireBar = new Label();
+            btnRightCorner = new Button();
+            lblRightCorner = new Label();
+            btnLeftCorner = new Button();
+            lblLeftCorner = new Label();
+            btnBothCorners = new Button();
+            lblAnyCorner = new Label();
+            ((System.ComponentModel.ISupportInitialize)volumeSlider).BeginInit();
+            topRowPanel.SuspendLayout();
+            panel1.SuspendLayout();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
-            // checkBoxEnableEnhancedTaskbarAutohide
+            // btnDesktop
             // 
-            checkBoxEnableEnhancedTaskbarAutohide.Location = new Point(12, 12);
-            checkBoxEnableEnhancedTaskbarAutohide.Name = "checkBoxEnableEnhancedTaskbarAutohide";
-            checkBoxEnableEnhancedTaskbarAutohide.Size = new Size(260, 20);
-            checkBoxEnableEnhancedTaskbarAutohide.TabIndex = 0;
-            checkBoxEnableEnhancedTaskbarAutohide.Text = "Enable Enhanced Taskbar Autohide";
-            checkBoxEnableEnhancedTaskbarAutohide.CheckedChanged += checkBoxEnableEnhancedTaskbarAutohide_CheckedChanged;
+            btnDesktop.BackColor = Color.FromArgb(60, 60, 60);
+            btnDesktop.FlatAppearance.BorderSize = 0;
+            btnDesktop.FlatStyle = FlatStyle.Flat;
+            btnDesktop.ForeColor = Color.White;
+            btnDesktop.Image = Properties.Resources.DesktopIcon;
+            btnDesktop.Location = new Point(0, 0);
+            btnDesktop.Name = "btnDesktop";
+            btnDesktop.Size = new Size(80, 45);
+            btnDesktop.TabIndex = 1;
+            btnDesktop.UseVisualStyleBackColor = false;
+            btnDesktop.Click += toggleButton_Click;
             // 
-            // checkBoxEnableDesktopIconToggle
+            // btnTaskbar
             // 
-            checkBoxEnableDesktopIconToggle.Location = new Point(12, 38);
-            checkBoxEnableDesktopIconToggle.Name = "checkBoxEnableDesktopIconToggle";
-            checkBoxEnableDesktopIconToggle.Size = new Size(260, 20);
-            checkBoxEnableDesktopIconToggle.TabIndex = 1;
-            checkBoxEnableDesktopIconToggle.Text = "Enable Desktop Icon Toggle";
+            btnTaskbar.BackColor = Color.FromArgb(60, 60, 60);
+            btnTaskbar.FlatAppearance.BorderSize = 0;
+            btnTaskbar.FlatStyle = FlatStyle.Flat;
+            btnTaskbar.ForeColor = Color.White;
+            btnTaskbar.Image = Properties.Resources.TaskbarIcon;
+            btnTaskbar.Location = new Point(90, 0);
+            btnTaskbar.Name = "btnTaskbar";
+            btnTaskbar.Size = new Size(80, 45);
+            btnTaskbar.TabIndex = 3;
+            btnTaskbar.UseVisualStyleBackColor = false;
+            btnTaskbar.Click += btnTaskbar_Click;
             // 
-            // groupBoxTaskbarAutohideSettings
+            // volumeSlider
             // 
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxDoubleClickToHideTaskbar);
-            groupBoxTaskbarAutohideSettings.Controls.Add(numericUpDownDoubleClickSensitivity);
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxUnhideByDraggingUpwards);
-            groupBoxTaskbarAutohideSettings.Controls.Add(numericUpDownDragThreshold);
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxUnhideByCursorInCorners);
-            groupBoxTaskbarAutohideSettings.Controls.Add(comboBoxCorners);
-            groupBoxTaskbarAutohideSettings.Controls.Add(numericUpDownCornerThreshold);
-            groupBoxTaskbarAutohideSettings.Controls.Add(numericUpDownCornerDelay);
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxTemporarilyShowForNotifications);
-            groupBoxTaskbarAutohideSettings.Controls.Add(numericUpDownNotificationDuration);
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxLockUnlockWithDoubleClick);
-            groupBoxTaskbarAutohideSettings.Controls.Add(labelLockState);
-            groupBoxTaskbarAutohideSettings.Controls.Add(checkBoxHideUnhideWithShortcut);
-            groupBoxTaskbarAutohideSettings.Controls.Add(textBoxShortcutKey);
-            groupBoxTaskbarAutohideSettings.Controls.Add(buttonCustomizeShortcut);
-            groupBoxTaskbarAutohideSettings.Location = new Point(12, 64);
-            groupBoxTaskbarAutohideSettings.Name = "groupBoxTaskbarAutohideSettings";
-            groupBoxTaskbarAutohideSettings.Size = new Size(360, 400);
-            groupBoxTaskbarAutohideSettings.TabIndex = 2;
-            groupBoxTaskbarAutohideSettings.TabStop = false;
-            groupBoxTaskbarAutohideSettings.Text = "Taskbar Autohide Settings";
-            groupBoxTaskbarAutohideSettings.Visible = false;
+            volumeSlider.BackColor = Color.FromArgb(44, 44, 44);
+            volumeSlider.Location = new Point(20, 338);
+            volumeSlider.Name = "volumeSlider";
+            volumeSlider.Size = new Size(260, 45);
+            volumeSlider.TabIndex = 13;
+            volumeSlider.TickStyle = TickStyle.None;
+            volumeSlider.Scroll += volumeSlider_Scroll;
             // 
-            // checkBoxDoubleClickToHideTaskbar
+            // lblVolume
             // 
-            checkBoxDoubleClickToHideTaskbar.Location = new Point(6, 20);
-            checkBoxDoubleClickToHideTaskbar.Name = "checkBoxDoubleClickToHideTaskbar";
-            checkBoxDoubleClickToHideTaskbar.Size = new Size(200, 20);
-            checkBoxDoubleClickToHideTaskbar.TabIndex = 0;
-            checkBoxDoubleClickToHideTaskbar.Text = "Double-Click to Hide Taskbar";
+            lblVolume.ForeColor = Color.White;
+            lblVolume.Location = new Point(20, 360);
+            lblVolume.Name = "lblVolume";
+            lblVolume.Size = new Size(260, 23);
+            lblVolume.TabIndex = 14;
+            lblVolume.Text = "Delay";
+            lblVolume.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // numericUpDownDoubleClickSensitivity
+            // bottomBar
             // 
-            numericUpDownDoubleClickSensitivity.Location = new Point(220, 20);
-            numericUpDownDoubleClickSensitivity.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
-            numericUpDownDoubleClickSensitivity.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDownDoubleClickSensitivity.Name = "numericUpDownDoubleClickSensitivity";
-            numericUpDownDoubleClickSensitivity.Size = new Size(120, 23);
-            numericUpDownDoubleClickSensitivity.TabIndex = 1;
-            numericUpDownDoubleClickSensitivity.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            bottomBar.BackColor = Color.FromArgb(36, 36, 36);
+            bottomBar.Dock = DockStyle.Bottom;
+            bottomBar.Location = new Point(0, 403);
+            bottomBar.Name = "bottomBar";
+            bottomBar.Size = new Size(300, 40);
+            bottomBar.TabIndex = 0;
             // 
-            // checkBoxUnhideByDraggingUpwards
+            // lblDesktop
             // 
-            checkBoxUnhideByDraggingUpwards.Location = new Point(6, 50);
-            checkBoxUnhideByDraggingUpwards.Name = "checkBoxUnhideByDraggingUpwards";
-            checkBoxUnhideByDraggingUpwards.Size = new Size(200, 20);
-            checkBoxUnhideByDraggingUpwards.TabIndex = 2;
-            checkBoxUnhideByDraggingUpwards.Text = "Unhide by Dragging Upwards";
+            lblDesktop.ForeColor = Color.White;
+            lblDesktop.Location = new Point(0, 48);
+            lblDesktop.Name = "lblDesktop";
+            lblDesktop.Size = new Size(80, 20);
+            lblDesktop.TabIndex = 2;
+            lblDesktop.Text = "Desktop";
+            lblDesktop.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // numericUpDownDragThreshold
+            // lblTaskbar
             // 
-            numericUpDownDragThreshold.Location = new Point(220, 50);
-            numericUpDownDragThreshold.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDownDragThreshold.Name = "numericUpDownDragThreshold";
-            numericUpDownDragThreshold.Size = new Size(120, 23);
-            numericUpDownDragThreshold.TabIndex = 3;
-            numericUpDownDragThreshold.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            lblTaskbar.ForeColor = Color.White;
+            lblTaskbar.Location = new Point(90, 48);
+            lblTaskbar.Name = "lblTaskbar";
+            lblTaskbar.Size = new Size(80, 20);
+            lblTaskbar.TabIndex = 4;
+            lblTaskbar.Text = "Taskbar";
+            lblTaskbar.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // checkBoxUnhideByCursorInCorners
+            // topRowPanel
             // 
-            checkBoxUnhideByCursorInCorners.Location = new Point(6, 80);
-            checkBoxUnhideByCursorInCorners.Name = "checkBoxUnhideByCursorInCorners";
-            checkBoxUnhideByCursorInCorners.Size = new Size(200, 20);
-            checkBoxUnhideByCursorInCorners.TabIndex = 4;
-            checkBoxUnhideByCursorInCorners.Text = "Unhide by Cursor in Bottom Corners";
+            topRowPanel.Controls.Add(btnDesktop);
+            topRowPanel.Controls.Add(lblDesktop);
+            topRowPanel.Controls.Add(btnTaskbar);
+            topRowPanel.Controls.Add(lblTaskbar);
+            topRowPanel.Controls.Add(btnAutoHide);
+            topRowPanel.Controls.Add(lblTip);
+            topRowPanel.Location = new Point(20, 20);
+            topRowPanel.Name = "topRowPanel";
+            topRowPanel.Size = new Size(260, 75);
+            topRowPanel.TabIndex = 15;
             // 
-            // comboBoxCorners
+            // btnAutoHide
             // 
-            comboBoxCorners.Items.AddRange(new object[] { "RightBottom", "LeftBottom", "BothBottom", "EntireBottom" });
-            comboBoxCorners.Location = new Point(220, 80);
-            comboBoxCorners.Name = "comboBoxCorners";
-            comboBoxCorners.Size = new Size(120, 23);
-            comboBoxCorners.TabIndex = 5;
+            btnAutoHide.BackColor = Color.FromArgb(60, 60, 60);
+            btnAutoHide.FlatAppearance.BorderSize = 0;
+            btnAutoHide.FlatStyle = FlatStyle.Flat;
+            btnAutoHide.ForeColor = Color.White;
+            btnAutoHide.Image = Properties.Resources.AutoHideIcon;
+            btnAutoHide.Location = new Point(180, 0);
+            btnAutoHide.Name = "btnAutoHide";
+            btnAutoHide.Size = new Size(80, 45);
+            btnAutoHide.TabIndex = 5;
+            btnAutoHide.UseVisualStyleBackColor = false;
+            btnAutoHide.Click += btnAutoHide_Click;
             // 
-            // numericUpDownCornerThreshold
+            // lblTip
             // 
-            numericUpDownCornerThreshold.Location = new Point(220, 110);
-            numericUpDownCornerThreshold.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDownCornerThreshold.Name = "numericUpDownCornerThreshold";
-            numericUpDownCornerThreshold.Size = new Size(120, 23);
-            numericUpDownCornerThreshold.TabIndex = 6;
-            numericUpDownCornerThreshold.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            lblTip.ForeColor = Color.White;
+            lblTip.Location = new Point(180, 48);
+            lblTip.Name = "lblTip";
+            lblTip.Size = new Size(80, 20);
+            lblTip.TabIndex = 6;
+            lblTip.Text = "Auto-Hide";
+            lblTip.TextAlign = ContentAlignment.MiddleCenter;
+            lblTip.Click += lblTip_Click;
             // 
-            // numericUpDownCornerDelay
+            // panel1
             // 
-            numericUpDownCornerDelay.Increment = new decimal(new int[] { 100, 0, 0, 0 });
-            numericUpDownCornerDelay.Location = new Point(220, 140);
-            numericUpDownCornerDelay.Maximum = new decimal(new int[] { 5000, 0, 0, 0 });
-            numericUpDownCornerDelay.Minimum = new decimal(new int[] { 100, 0, 0, 0 });
-            numericUpDownCornerDelay.Name = "numericUpDownCornerDelay";
-            numericUpDownCornerDelay.Size = new Size(120, 23);
-            numericUpDownCornerDelay.TabIndex = 7;
-            numericUpDownCornerDelay.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            panel1.Controls.Add(btnDoubleClick);
+            panel1.Controls.Add(label1);
+            panel1.Controls.Add(btnCursor);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(btnKey);
+            panel1.Controls.Add(label3);
+            panel1.Location = new Point(20, 101);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(260, 75);
+            panel1.TabIndex = 16;
+            panel1.Visible = false;
             // 
-            // checkBoxTemporarilyShowForNotifications
+            // btnDoubleClick
             // 
-            checkBoxTemporarilyShowForNotifications.Location = new Point(6, 170);
-            checkBoxTemporarilyShowForNotifications.Name = "checkBoxTemporarilyShowForNotifications";
-            checkBoxTemporarilyShowForNotifications.Size = new Size(200, 20);
-            checkBoxTemporarilyShowForNotifications.TabIndex = 8;
-            checkBoxTemporarilyShowForNotifications.Text = "Temporarily Show for Notifications";
+            btnDoubleClick.BackColor = Color.FromArgb(60, 60, 60);
+            btnDoubleClick.FlatAppearance.BorderSize = 0;
+            btnDoubleClick.FlatStyle = FlatStyle.Flat;
+            btnDoubleClick.ForeColor = Color.White;
+            btnDoubleClick.Image = Properties.Resources.DoubleClickIcon;
+            btnDoubleClick.Location = new Point(0, 0);
+            btnDoubleClick.Name = "btnDoubleClick";
+            btnDoubleClick.Size = new Size(80, 45);
+            btnDoubleClick.TabIndex = 1;
+            btnDoubleClick.UseVisualStyleBackColor = false;
+            btnDoubleClick.Click += toggleButton_Click;
             // 
-            // numericUpDownNotificationDuration
+            // label1
             // 
-            numericUpDownNotificationDuration.Location = new Point(220, 170);
-            numericUpDownNotificationDuration.Maximum = new decimal(new int[] { 60, 0, 0, 0 });
-            numericUpDownNotificationDuration.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDownNotificationDuration.Name = "numericUpDownNotificationDuration";
-            numericUpDownNotificationDuration.Size = new Size(120, 23);
-            numericUpDownNotificationDuration.TabIndex = 9;
-            numericUpDownNotificationDuration.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            label1.ForeColor = Color.White;
+            label1.Location = new Point(0, 48);
+            label1.Name = "label1";
+            label1.Size = new Size(80, 20);
+            label1.TabIndex = 2;
+            label1.Text = "Double-Click";
+            label1.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // checkBoxLockUnlockWithDoubleClick
+            // btnCursor
             // 
-            checkBoxLockUnlockWithDoubleClick.Location = new Point(6, 200);
-            checkBoxLockUnlockWithDoubleClick.Name = "checkBoxLockUnlockWithDoubleClick";
-            checkBoxLockUnlockWithDoubleClick.Size = new Size(200, 20);
-            checkBoxLockUnlockWithDoubleClick.TabIndex = 10;
-            checkBoxLockUnlockWithDoubleClick.Text = "Lock/Unlock with Double-Click";
+            btnCursor.BackColor = Color.FromArgb(60, 60, 60);
+            btnCursor.FlatAppearance.BorderSize = 0;
+            btnCursor.FlatStyle = FlatStyle.Flat;
+            btnCursor.ForeColor = Color.White;
+            btnCursor.Image = Properties.Resources.CursorIcon;
+            btnCursor.Location = new Point(90, 0);
+            btnCursor.Name = "btnCursor";
+            btnCursor.Size = new Size(80, 45);
+            btnCursor.TabIndex = 3;
+            btnCursor.UseVisualStyleBackColor = false;
+            btnCursor.Click += toggleButton_Click;
             // 
-            // labelLockState
+            // label2
             // 
-            labelLockState.Location = new Point(220, 200);
-            labelLockState.Name = "labelLockState";
-            labelLockState.Size = new Size(120, 20);
-            labelLockState.TabIndex = 11;
-            labelLockState.Text = "State: Unlocked";
+            label2.ForeColor = Color.White;
+            label2.Location = new Point(90, 48);
+            label2.Name = "label2";
+            label2.Size = new Size(80, 20);
+            label2.TabIndex = 4;
+            label2.Text = "Cursor";
+            label2.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // checkBoxHideUnhideWithShortcut
+            // btnKey
             // 
-            checkBoxHideUnhideWithShortcut.Location = new Point(6, 230);
-            checkBoxHideUnhideWithShortcut.Name = "checkBoxHideUnhideWithShortcut";
-            checkBoxHideUnhideWithShortcut.Size = new Size(200, 20);
-            checkBoxHideUnhideWithShortcut.TabIndex = 12;
-            checkBoxHideUnhideWithShortcut.Text = "Hide/Unhide with Shortcut Key";
+            btnKey.BackColor = Color.FromArgb(60, 60, 60);
+            btnKey.FlatAppearance.BorderSize = 0;
+            btnKey.FlatStyle = FlatStyle.Flat;
+            btnKey.ForeColor = Color.White;
+            btnKey.Image = Properties.Resources.KeyIcon;
+            btnKey.Location = new Point(180, 0);
+            btnKey.Name = "btnKey";
+            btnKey.Size = new Size(80, 45);
+            btnKey.TabIndex = 5;
+            btnKey.UseVisualStyleBackColor = false;
+            btnKey.Click += toggleButton_Click;
             // 
-            // textBoxShortcutKey
+            // label3
             // 
-            textBoxShortcutKey.Location = new Point(220, 230);
-            textBoxShortcutKey.Name = "textBoxShortcutKey";
-            textBoxShortcutKey.Size = new Size(80, 23);
-            textBoxShortcutKey.TabIndex = 13;
-            textBoxShortcutKey.Text = "Shift + Tab";
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(180, 48);
+            label3.Name = "label3";
+            label3.Size = new Size(80, 20);
+            label3.TabIndex = 6;
+            label3.Text = "Key";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // buttonCustomizeShortcut
+            // panel2
             // 
-            buttonCustomizeShortcut.Location = new Point(310, 230);
-            buttonCustomizeShortcut.Name = "buttonCustomizeShortcut";
-            buttonCustomizeShortcut.Size = new Size(30, 20);
-            buttonCustomizeShortcut.TabIndex = 14;
-            buttonCustomizeShortcut.Text = "...";
+            panel2.Controls.Add(lblShortcut);
+            panel2.Controls.Add(btnShortcut);
+            panel2.Controls.Add(btnEntireBar);
+            panel2.Controls.Add(lblEntireBar);
+            panel2.Controls.Add(btnRightCorner);
+            panel2.Controls.Add(lblRightCorner);
+            panel2.Controls.Add(btnLeftCorner);
+            panel2.Controls.Add(btnBothCorners);
+            panel2.Controls.Add(lblLeftCorner);
+            panel2.Controls.Add(lblAnyCorner);
+            panel2.Location = new Point(20, 182);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(260, 150);
+            panel2.TabIndex = 16;
+            panel2.Visible = false;
             // 
-            // buttonSave
+            // lblShortcut
             // 
-            buttonSave.Location = new Point(297, 527);
-            buttonSave.Name = "buttonSave";
-            buttonSave.Size = new Size(75, 23);
-            buttonSave.TabIndex = 3;
-            buttonSave.Text = "Save";
-            buttonSave.UseVisualStyleBackColor = true;
-            buttonSave.Click += buttonSave_Click;
+            lblShortcut.ForeColor = Color.White;
+            lblShortcut.Location = new Point(134, 121);
+            lblShortcut.Name = "lblShortcut";
+            lblShortcut.Size = new Size(80, 20);
+            lblShortcut.TabIndex = 10;
+            lblShortcut.Text = "Shortcut";
+            lblShortcut.TextAlign = ContentAlignment.MiddleCenter;
+            lblShortcut.Visible = false;
+            lblShortcut.Click += lblShortcut_Click;
+            // 
+            // btnShortcut
+            // 
+            btnShortcut.BackColor = Color.FromArgb(60, 60, 60);
+            btnShortcut.FlatAppearance.BorderSize = 0;
+            btnShortcut.FlatStyle = FlatStyle.Flat;
+            btnShortcut.ForeColor = Color.White;
+            btnShortcut.Location = new Point(90, 73);
+            btnShortcut.Name = "btnShortcut";
+            btnShortcut.Size = new Size(167, 45);
+            btnShortcut.TabIndex = 9;
+            btnShortcut.Text = "Shift+Tab";
+            btnShortcut.UseVisualStyleBackColor = false;
+            btnShortcut.Visible = false;
+            btnShortcut.Click += buttonShortcut_Click;
+            // 
+            // btnEntireBar
+            // 
+            btnEntireBar.BackColor = Color.FromArgb(60, 60, 60);
+            btnEntireBar.FlatAppearance.BorderSize = 0;
+            btnEntireBar.FlatStyle = FlatStyle.Flat;
+            btnEntireBar.ForeColor = Color.White;
+            btnEntireBar.Image = Properties.Resources.EntireBarIcon;
+            btnEntireBar.Location = new Point(0, 73);
+            btnEntireBar.Name = "btnEntireBar";
+            btnEntireBar.Size = new Size(80, 45);
+            btnEntireBar.TabIndex = 7;
+            btnEntireBar.UseVisualStyleBackColor = false;
+            btnEntireBar.Visible = false;
+            btnEntireBar.Click += exclusiveButton_Click;
+            // 
+            // lblEntireBar
+            // 
+            lblEntireBar.ForeColor = Color.White;
+            lblEntireBar.Location = new Point(0, 121);
+            lblEntireBar.Name = "lblEntireBar";
+            lblEntireBar.Size = new Size(80, 20);
+            lblEntireBar.TabIndex = 8;
+            lblEntireBar.Text = "Bottom";
+            lblEntireBar.TextAlign = ContentAlignment.MiddleCenter;
+            lblEntireBar.Visible = false;
+            // 
+            // btnRightCorner
+            // 
+            btnRightCorner.BackColor = Color.FromArgb(60, 60, 60);
+            btnRightCorner.FlatAppearance.BorderSize = 0;
+            btnRightCorner.FlatStyle = FlatStyle.Flat;
+            btnRightCorner.ForeColor = Color.White;
+            btnRightCorner.Image = Properties.Resources.RightCornerIcon;
+            btnRightCorner.Location = new Point(90, 0);
+            btnRightCorner.Name = "btnRightCorner";
+            btnRightCorner.Size = new Size(80, 45);
+            btnRightCorner.TabIndex = 1;
+            btnRightCorner.UseVisualStyleBackColor = false;
+            btnRightCorner.Visible = false;
+            btnRightCorner.Click += exclusiveButton_Click;
+            // 
+            // lblRightCorner
+            // 
+            lblRightCorner.ForeColor = Color.White;
+            lblRightCorner.Location = new Point(90, 48);
+            lblRightCorner.Name = "lblRightCorner";
+            lblRightCorner.Size = new Size(80, 20);
+            lblRightCorner.TabIndex = 2;
+            lblRightCorner.Text = "Right-Corner";
+            lblRightCorner.TextAlign = ContentAlignment.MiddleCenter;
+            lblRightCorner.Visible = false;
+            // 
+            // btnLeftCorner
+            // 
+            btnLeftCorner.BackColor = Color.FromArgb(60, 60, 60);
+            btnLeftCorner.FlatAppearance.BorderSize = 0;
+            btnLeftCorner.FlatStyle = FlatStyle.Flat;
+            btnLeftCorner.ForeColor = Color.White;
+            btnLeftCorner.Image = Properties.Resources.LeftCornerIcon;
+            btnLeftCorner.Location = new Point(0, 0);
+            btnLeftCorner.Name = "btnLeftCorner";
+            btnLeftCorner.Size = new Size(80, 45);
+            btnLeftCorner.TabIndex = 3;
+            btnLeftCorner.UseVisualStyleBackColor = false;
+            btnLeftCorner.Visible = false;
+            btnLeftCorner.Click += exclusiveButton_Click;
+            // 
+            // lblLeftCorner
+            // 
+            lblLeftCorner.ForeColor = Color.White;
+            lblLeftCorner.Location = new Point(0, 48);
+            lblLeftCorner.Name = "lblLeftCorner";
+            lblLeftCorner.Size = new Size(80, 20);
+            lblLeftCorner.TabIndex = 4;
+            lblLeftCorner.Text = "Left-Corner";
+            lblLeftCorner.TextAlign = ContentAlignment.MiddleCenter;
+            lblLeftCorner.Visible = false;
+            // 
+            // btnBothCorners
+            // 
+            btnBothCorners.BackColor = Color.FromArgb(60, 60, 60);
+            btnBothCorners.FlatAppearance.BorderSize = 0;
+            btnBothCorners.FlatStyle = FlatStyle.Flat;
+            btnBothCorners.ForeColor = Color.White;
+            btnBothCorners.Image = Properties.Resources.BothCornersIcon;
+            btnBothCorners.Location = new Point(180, 0);
+            btnBothCorners.Name = "btnBothCorners";
+            btnBothCorners.Size = new Size(80, 45);
+            btnBothCorners.TabIndex = 5;
+            btnBothCorners.UseVisualStyleBackColor = false;
+            btnBothCorners.Visible = false;
+            btnBothCorners.Click += exclusiveButton_Click;
+            // 
+            // lblAnyCorner
+            // 
+            lblAnyCorner.ForeColor = Color.White;
+            lblAnyCorner.Location = new Point(180, 48);
+            lblAnyCorner.Name = "lblAnyCorner";
+            lblAnyCorner.Size = new Size(80, 20);
+            lblAnyCorner.TabIndex = 6;
+            lblAnyCorner.Text = "Any-Corner";
+            lblAnyCorner.TextAlign = ContentAlignment.MiddleCenter;
+            lblAnyCorner.Visible = false;
             // 
             // SettingsForm
             // 
-            ClientSize = new Size(383, 600);
-            Controls.Add(checkBoxEnableEnhancedTaskbarAutohide);
-            Controls.Add(checkBoxEnableDesktopIconToggle);
-            Controls.Add(groupBoxTaskbarAutohideSettings);
-            Controls.Add(buttonSave);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
+            BackColor = Color.FromArgb(44, 44, 44);
+            ClientSize = new Size(300, 443);
+            Controls.Add(panel2);
+            Controls.Add(panel1);
+            Controls.Add(topRowPanel);
+            Controls.Add(lblVolume);
+            Controls.Add(bottomBar);
+            Controls.Add(volumeSlider);
+            ForeColor = Color.FromArgb(30, 30, 30);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "SettingsForm";
-            Text = "Settings";
-            groupBoxTaskbarAutohideSettings.ResumeLayout(false);
-            groupBoxTaskbarAutohideSettings.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownDoubleClickSensitivity).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownDragThreshold).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownCornerThreshold).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownCornerDelay).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDownNotificationDuration).EndInit();
+            TransparencyKey = Color.Magenta;
+            ((System.ComponentModel.ISupportInitialize)volumeSlider).EndInit();
+            topRowPanel.ResumeLayout(false);
+            panel1.ResumeLayout(false);
+            panel2.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
-        private void checkBoxEnableEnhancedTaskbarAutohide_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBoxTaskbarAutohideSettings.Visible = checkBoxEnableEnhancedTaskbarAutohide.Checked;
-        }
+        private Panel panel1;
+        private Button btnDoubleClick;
+        private Label label1;
+        private Button btnCursor;
+        private Label label2;
+        private Button btnKey;
+        private Label label3;
+        private Panel panel2;
+        private Button btnEntireBar;
+        private Label lblEntireBar;
+        private Button btnRightCorner;
+        private Label lblRightCorner;
+        private Button btnLeftCorner;
+        private Label lblLeftCorner;
+        private Button btnBothCorners;
+        private Label lblAnyCorner;
+        private Label lblShortcut;
+        private Button btnShortcut;
+        private Button btnAutoHide;
+        private Label lblTip;
     }
 }
