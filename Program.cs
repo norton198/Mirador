@@ -27,7 +27,6 @@ namespace Mirador
 
         private static Timer _autoHideTaskbarTimer;
         private static readonly int TimerInterval = 1000; // Interval in milliseconds
-        private bool autohideTaskbarEnabled = Properties.Settings.Default.AutoHide;
 
         [STAThread]
         public static void Main()
@@ -76,7 +75,7 @@ namespace Mirador
             _autoHideTaskbarTimer.Interval = TimerInterval;
             _autoHideTaskbarTimer.Tick += (sender, args) =>
             {
-                if (Taskbar.IsTaskbarVisible())
+                if (Taskbar.IsTaskbarVisible() && Properties.Settings.Default.AutoHide)
                 {
                     NativeMethods.GetCursorPos(out Point point);
                     Point currentPos = new Point(point.X, point.Y);

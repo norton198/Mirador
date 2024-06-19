@@ -15,7 +15,7 @@
         private bool isTaskbarToggled = false;
         private bool isCursorToggled = false;
         private bool isKeyToggled = false;
-
+        private bool isAutoHideToggled = false;
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -163,7 +163,7 @@
             btnAutoHide.Size = new Size(80, 45);
             btnAutoHide.TabIndex = 5;
             btnAutoHide.UseVisualStyleBackColor = false;
-            btnAutoHide.Click += btnAutoHide_Click;
+            btnAutoHide.Click += toggleButton_Click;
             // 
             // lblTip
             // 
@@ -305,7 +305,7 @@
             btnShortcut.Text = "Shift+Tab";
             btnShortcut.UseVisualStyleBackColor = false;
             btnShortcut.Visible = false;
-            btnShortcut.Click += buttonShortcut_Click;
+            btnShortcut.Click += toggleButton_Click;
             // 
             // btnEntireBar
             // 

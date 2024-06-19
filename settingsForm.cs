@@ -78,6 +78,8 @@ namespace Mirador
         }
 
         int panelCallers = 0;
+
+
         private void MakePanelVisible(bool isVisible, bool isCursorOrKey)
         {
             if (isVisible)
@@ -156,6 +158,15 @@ namespace Mirador
                 {
                     isKeyToggled = !isKeyToggled;
                     MakePanelVisible(isKeyToggled, false);
+                }
+                else if(button == btnAutoHide)
+                {
+                    isAutoHideToggled = !isAutoHideToggled;
+                    Properties.Settings.Default.AutoHide = isAutoHideToggled;
+                }
+                else if(button == btnShortcut)
+                {
+                    
                 }
             }
         }
