@@ -1,7 +1,5 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 
 namespace Mirador
 {
@@ -35,6 +33,8 @@ namespace Mirador
         public const ushort RI_KEY_E1 = 0x04;
 
         private bool isLeftButtonDown = false;
+
+        public SettingsForm settingsForm;
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RAWINPUTHEADER
@@ -135,7 +135,8 @@ namespace Mirador
         public static extern int GetKeyNameTextW(uint lParam, StringBuilder lpString, int cchSize);
 
 
-        public enum Keys : ushort
+        // Keyboard keys codes for reference and testing.
+        public enum Keys : uint
         {
             // Modifier keys
             LeftCtrl = 0x1D,
@@ -198,6 +199,18 @@ namespace Mirador
             F10 = 0x44,
             F11 = 0x57,
             F12 = 0x58,
+            F13 = 0x64,
+            F14 = 0x65,
+            F15 = 0x66,
+            F16 = 0x67,
+            F17 = 0x68,
+            F18 = 0x69,
+            F19 = 0x6A,
+            F20 = 0x6B,
+            F21 = 0x6C,
+            F22 = 0x6D,
+            F23 = 0x6E,
+            F24 = 0x76,
 
             // Special keys
             Enter = 0x1C,
@@ -235,6 +248,7 @@ namespace Mirador
             NumpadMultiply = 0x37,
             NumpadDivide = 0x35,
             NumpadEnter = 0xE01C,
+            NumpadPeriod = 0x53,
 
             // Punctuation keys
             Semicolon = 0x27,
@@ -253,7 +267,67 @@ namespace Mirador
             CapsLock = 0x3A,
             ScrollLock = 0x46,
             PrintScreen = 0xE037,
-            Pause = 0x45,
+            Pause = 0xE11D45,
+
+            // Media keys
+            MediaPrevious = 0xE010,
+            MediaNext = 0xE019,
+            MediaPlay = 0xE022,
+            MediaStop = 0xE024,
+            VolumeMute = 0xE020,
+            VolumeDown = 0xE02E,
+            VolumeUp = 0xE030,
+
+            // Browser keys
+            BrowserBack = 0xE06A,
+            BrowserForward = 0xE069,
+            BrowserRefresh = 0xE067,
+            BrowserStop = 0xE068,
+            BrowserSearch = 0xE065,
+            BrowserFavorites = 0xE066,
+            BrowserHome = 0xE032,
+
+            // Application launcher keys
+            LaunchMail = 0xE06C,
+            LaunchMedia = 0xE06D,
+            LaunchApp1 = 0xE06B,
+            LaunchApp2 = 0xE021,
+
+            // OEM keys
+            Oem1 = 0x5A,
+            Oem2 = 0x5B,
+            Oem3 = 0x5C,
+            Oem4 = 0x5E,
+            Oem5 = 0x5F,
+            Oem6 = 0x6F,
+            Oem7 = 0x71,
+            Oem8 = 0xE07E,
+            OemReset = 0x71,
+            OemJump = 0x5C,
+            OemPa1 = 0x7B,
+            OemPa2 = 0xE05B,
+            OemPa3 = 0x6F,
+            OemWsCtrl = 0x5A,
+            OemCusel = 0x5E,
+            OemAttn = 0x7B,
+            OemFinish = 0x5B,
+            OemCopy = 0xE02A,
+            OemAuto = 0x5F,
+            OemEnlw = 0xE05E,
+            OemBacktab = 0x5E,
+
+            // Japanese keys
+            Katakana = 0x70,
+            Convert = 0x79,
+            NoConvert = 0x7B,
+
+            // Other extended keys
+            MetaLeft = 0xE05B,
+            MetaRight = 0xE05C,
+            Application = 0xE05D,
+            Power = 0xE05E,
+            Sleep = 0xE05F,
+            Wake = 0xE063,
         }
 
         public void RegisterRawInput(IntPtr hwndTarget)
@@ -263,13 +337,13 @@ namespace Mirador
             // Register for mouse input
             rid[0].usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
             rid[0].usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
-            rid[0].dwFlags = RIDEV_INPUTSINK; // Adds mouse and ignore legacy mouse messages
+            rid[0].dwFlags = RIDEV_INPUTSINK; // Enables the caller to receive the input even when the caller is not in the foreground.
             rid[0].hwndTarget = hwndTarget; // Handle to the window that will receive raw input
 
             // Register for keyboard input
             rid[1].usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
             rid[1].usUsage = 0x06; // HID_USAGE_GENERIC_KEYBOARD
-            rid[1].dwFlags = RIDEV_INPUTSINK; // Adds keyboard and ignore legacy keyboard messages
+            rid[1].dwFlags = RIDEV_INPUTSINK; // Enables the caller to receive the input even when the caller is not in the foreground.
             rid[1].hwndTarget = hwndTarget; // Handle to the window that will receive raw input
 
             if (!RegisterRawInputDevices(rid, (uint)rid.Length, (uint)Marshal.SizeOf(typeof(RAWINPUTDEVICE))))
@@ -282,7 +356,7 @@ namespace Mirador
             }
         }
 
-        private static string GetKeyName(uint scanCode, uint flags)
+        public static string GetKeyName(uint scanCode, uint flags)
         {
             uint lParam = (scanCode & 0xff) << 16;
             if ((flags & RI_KEY_E0) != 0)
@@ -292,26 +366,45 @@ namespace Mirador
             return result > 0 ? sb.ToString() : "Unknown";
         }
 
-        private HashSet<ushort> pressedKeys = new HashSet<ushort>();
-        private List<ushort> shortcut = new List<ushort>() { (ushort)Keys.LeftCtrl, (ushort)Keys.LeftShift, (ushort)Keys.A };
-        private bool isListeningForShortcut = true;
-        private List<ushort> currentCombination = new List<ushort>();
+        private HashSet<uint> pressedKeys = new HashSet<uint>();
+        private List<uint> shortcut = new List<uint>() { (uint)Keys.LeftCtrl, (uint)Keys.LeftShift, (uint)Keys.A };
+        private bool isListeningForShortcut = false;
+        private List<uint> currentCombination = new List<uint>();
 
-        public void ListenForShortcut()
+        public void ListenForShortcut(bool isListening)
         {
-            isListeningForShortcut = true;
+            isListeningForShortcut = isListening;
             currentCombination.Clear();
         }
 
-        public void SetShortcut(params ushort[] keys)
+        public void SetShortcut(params uint[] keys)
         {
-            shortcut = new List<ushort>(keys);
+            shortcut = new List<uint>(keys);
+            StoreShortcut(shortcut);
+        }
+
+        public void StoreShortcut(List<uint> keys)
+        {
+            Settings.Current.ShortcutKeys = keys;
+            Settings.Current.Save();
+
+            if (keys.Count > 0)
+            {
+                Console.WriteLine("Combined Shortcut: " + string.Join(" + ", keys.Select(k => RawInput.GetKeyName(k, 0))));
+                Console.WriteLine("Shortcut stored successfully!");
+            }
+            else
+            {
+                Console.WriteLine("Failed to store shortcut.");
+            }
         }
 
         private bool IsShortcutPressed()
         {
-            return shortcut.TrueForAll(key => pressedKeys.Contains(key));
+            var shortcutKeys = Settings.Current.ShortcutKeys;
+            return shortcutKeys != null && shortcutKeys.All(key => pressedKeys.Contains(key));
         }
+
 
         public void ProcessInputMessage(ref Message m)
         {
@@ -396,7 +489,14 @@ namespace Mirador
                         {
                             if (!currentCombination.Contains(makeCode))
                             {
+                                if (currentCombination.Count == 0)
+                                {
+                                    settingsForm.StopListeningAnimation();
+                                    settingsForm.ClearShortcutBtnText();
+                                }
+
                                 currentCombination.Add(makeCode);
+                                settingsForm.UpdateShortcutBtnText(keyName, false);
                             }
                         }
                     }
@@ -415,6 +515,7 @@ namespace Mirador
                             Console.WriteLine("New shortcut set!");
                             isListeningForShortcut = false;
                             currentCombination.Clear();
+                            settingsForm.UpdateShortcutBtnText("", true);
                         }
                     }
                     else if (IsShortcutPressed())
