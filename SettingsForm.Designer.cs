@@ -5,17 +5,14 @@
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.Button btnDesktop;
         private System.Windows.Forms.Button btnTaskbar;
-        private System.Windows.Forms.TrackBar volumeSlider;
-        private System.Windows.Forms.Label lblVolume;
+        private System.Windows.Forms.TrackBar delaySlider;
+        private System.Windows.Forms.Label lblDelay;
         private System.Windows.Forms.Panel bottomBar;
         private System.Windows.Forms.Label lblDesktop;
         private System.Windows.Forms.Label lblTaskbar;
         private System.Windows.Forms.Panel topRowPanel;
+        private System.Windows.Forms.ToolTip toolTip;
 
-        private bool isTaskbarToggled = false;
-        private bool isCursorToggled = false;
-        private bool isKeyToggled = false;
-        private bool isAutoHideToggled = false;
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -27,10 +24,11 @@
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             btnDesktop = new Button();
             btnTaskbar = new Button();
-            volumeSlider = new TrackBar();
-            lblVolume = new Label();
+            delaySlider = new TrackBar();
+            lblDelay = new Label();
             bottomBar = new Panel();
             lblDesktop = new Label();
             lblTaskbar = new Label();
@@ -52,10 +50,11 @@
             btnRightCorner = new Button();
             lblRightCorner = new Label();
             btnLeftCorner = new Button();
-            lblLeftCorner = new Label();
             btnBothCorners = new Button();
+            lblLeftCorner = new Label();
             lblAnyCorner = new Label();
-            ((System.ComponentModel.ISupportInitialize)volumeSlider).BeginInit();
+            toolTip = new ToolTip(components);
+            ((System.ComponentModel.ISupportInitialize)delaySlider).BeginInit();
             topRowPanel.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -74,6 +73,7 @@
             btnDesktop.TabIndex = 1;
             btnDesktop.UseVisualStyleBackColor = false;
             btnDesktop.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnDesktop, "Toggle Desktop Icons On Double-Click");
             // 
             // btnTaskbar
             // 
@@ -88,26 +88,30 @@
             btnTaskbar.TabIndex = 3;
             btnTaskbar.UseVisualStyleBackColor = false;
             btnTaskbar.Click += btnTaskbar_Click;
+            toolTip.SetToolTip(btnTaskbar, "Toggle Taskbar Visibility Settings");
             // 
-            // volumeSlider
+            // delaySlider
             // 
-            volumeSlider.BackColor = Color.FromArgb(44, 44, 44);
-            volumeSlider.Location = new Point(20, 338);
-            volumeSlider.Name = "volumeSlider";
-            volumeSlider.Size = new Size(260, 45);
-            volumeSlider.TabIndex = 13;
-            volumeSlider.TickStyle = TickStyle.None;
-            volumeSlider.Scroll += volumeSlider_Scroll;
+            delaySlider.BackColor = Color.FromArgb(44, 44, 44);
+            delaySlider.LargeChange = 100;
+            delaySlider.Location = new Point(20, 338);
+            delaySlider.Maximum = 1000;
+            delaySlider.Name = "delaySlider";
+            delaySlider.Size = new Size(260, 45);
+            delaySlider.TabIndex = 13;
+            delaySlider.TickStyle = TickStyle.None;
+            delaySlider.Scroll += delaySlider_Scroll;
+            toolTip.SetToolTip(delaySlider, "Adjust Auto-Hide Delay");
             // 
-            // lblVolume
+            // lblDelay
             // 
-            lblVolume.ForeColor = Color.White;
-            lblVolume.Location = new Point(20, 360);
-            lblVolume.Name = "lblVolume";
-            lblVolume.Size = new Size(260, 23);
-            lblVolume.TabIndex = 14;
-            lblVolume.Text = "Delay";
-            lblVolume.TextAlign = ContentAlignment.MiddleCenter;
+            lblDelay.ForeColor = Color.White;
+            lblDelay.Location = new Point(20, 360);
+            lblDelay.Name = "lblDelay";
+            lblDelay.Size = new Size(260, 23);
+            lblDelay.TabIndex = 14;
+            lblDelay.Text = "Delay";
+            lblDelay.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // bottomBar
             // 
@@ -125,7 +129,7 @@
             lblDesktop.Name = "lblDesktop";
             lblDesktop.Size = new Size(80, 20);
             lblDesktop.TabIndex = 2;
-            lblDesktop.Text = "Desktop";
+            lblDesktop.Text = "Icons Toggler";
             lblDesktop.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblTaskbar
@@ -164,6 +168,7 @@
             btnAutoHide.TabIndex = 5;
             btnAutoHide.UseVisualStyleBackColor = false;
             btnAutoHide.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnAutoHide, "Toggle Customizable Auto-Hide Feature");
             // 
             // lblTip
             // 
@@ -174,7 +179,6 @@
             lblTip.TabIndex = 6;
             lblTip.Text = "Auto-Hide";
             lblTip.TextAlign = ContentAlignment.MiddleCenter;
-            lblTip.Click += lblTip_Click;
             // 
             // panel1
             // 
@@ -203,6 +207,7 @@
             btnDoubleClick.TabIndex = 1;
             btnDoubleClick.UseVisualStyleBackColor = false;
             btnDoubleClick.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnDoubleClick, "Toggle Hide Taskbar On Double-Click");
             // 
             // label1
             // 
@@ -227,6 +232,7 @@
             btnCursor.TabIndex = 3;
             btnCursor.UseVisualStyleBackColor = false;
             btnCursor.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnCursor, "Unhide Taskbar On Cursor Settings");
             // 
             // label2
             // 
@@ -251,6 +257,7 @@
             btnKey.TabIndex = 5;
             btnKey.UseVisualStyleBackColor = false;
             btnKey.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnKey, "Toggle Taskbar Visiblity Control On Shortcut");
             // 
             // label3
             // 
@@ -290,13 +297,13 @@
             lblShortcut.Text = "Shortcut";
             lblShortcut.TextAlign = ContentAlignment.MiddleCenter;
             lblShortcut.Visible = false;
-            lblShortcut.Click += lblShortcut_Click;
             // 
             // btnShortcut
             // 
             btnShortcut.BackColor = Color.FromArgb(60, 60, 60);
             btnShortcut.FlatAppearance.BorderSize = 0;
             btnShortcut.FlatStyle = FlatStyle.Flat;
+            btnShortcut.Font = new Font("Segoe UI", 12F);
             btnShortcut.ForeColor = Color.White;
             btnShortcut.Location = new Point(90, 73);
             btnShortcut.Name = "btnShortcut";
@@ -306,6 +313,7 @@
             btnShortcut.UseVisualStyleBackColor = false;
             btnShortcut.Visible = false;
             btnShortcut.Click += toggleButton_Click;
+            toolTip.SetToolTip(btnShortcut, "Set Shortcut");
             // 
             // btnEntireBar
             // 
@@ -321,6 +329,7 @@
             btnEntireBar.UseVisualStyleBackColor = false;
             btnEntireBar.Visible = false;
             btnEntireBar.Click += exclusiveButton_Click;
+            toolTip.SetToolTip(btnEntireBar, "Entire Bar Setting");
             // 
             // lblEntireBar
             // 
@@ -347,6 +356,7 @@
             btnRightCorner.UseVisualStyleBackColor = false;
             btnRightCorner.Visible = false;
             btnRightCorner.Click += exclusiveButton_Click;
+            toolTip.SetToolTip(btnRightCorner, "Right Corner Setting");
             // 
             // lblRightCorner
             // 
@@ -373,17 +383,7 @@
             btnLeftCorner.UseVisualStyleBackColor = false;
             btnLeftCorner.Visible = false;
             btnLeftCorner.Click += exclusiveButton_Click;
-            // 
-            // lblLeftCorner
-            // 
-            lblLeftCorner.ForeColor = Color.White;
-            lblLeftCorner.Location = new Point(0, 48);
-            lblLeftCorner.Name = "lblLeftCorner";
-            lblLeftCorner.Size = new Size(80, 20);
-            lblLeftCorner.TabIndex = 4;
-            lblLeftCorner.Text = "Left-Corner";
-            lblLeftCorner.TextAlign = ContentAlignment.MiddleCenter;
-            lblLeftCorner.Visible = false;
+            toolTip.SetToolTip(btnLeftCorner, "Left Corner Setting");
             // 
             // btnBothCorners
             // 
@@ -399,6 +399,18 @@
             btnBothCorners.UseVisualStyleBackColor = false;
             btnBothCorners.Visible = false;
             btnBothCorners.Click += exclusiveButton_Click;
+            toolTip.SetToolTip(btnBothCorners, "Any Corner Setting");
+            // 
+            // lblLeftCorner
+            // 
+            lblLeftCorner.ForeColor = Color.White;
+            lblLeftCorner.Location = new Point(0, 48);
+            lblLeftCorner.Name = "lblLeftCorner";
+            lblLeftCorner.Size = new Size(80, 20);
+            lblLeftCorner.TabIndex = 4;
+            lblLeftCorner.Text = "Left-Corner";
+            lblLeftCorner.TextAlign = ContentAlignment.MiddleCenter;
+            lblLeftCorner.Visible = false;
             // 
             // lblAnyCorner
             // 
@@ -418,14 +430,14 @@
             Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(topRowPanel);
-            Controls.Add(lblVolume);
+            Controls.Add(lblDelay);
             Controls.Add(bottomBar);
-            Controls.Add(volumeSlider);
+            Controls.Add(delaySlider);
             ForeColor = Color.FromArgb(30, 30, 30);
             FormBorderStyle = FormBorderStyle.None;
             Name = "SettingsForm";
             TransparencyKey = Color.Magenta;
-            ((System.ComponentModel.ISupportInitialize)volumeSlider).EndInit();
+            ((System.ComponentModel.ISupportInitialize)delaySlider).EndInit();
             topRowPanel.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
