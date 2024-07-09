@@ -7,17 +7,17 @@ using Microsoft.Win32;
 
 namespace Mirador
 {
-    internal class TrayMenu
+    public class TrayMenu
     {
-        public static NotifyIcon _notifyIcon;
-        private static ContextMenuStrip _contextMenu;
-        private static Image _titleBackgroundImageLight;
-        private static Image _titleBackgroundImageDark;
-        private static ToolStripMenuItem _titleMenuItem;
-        public static SettingsForm _settingsForm;
+        public NotifyIcon _notifyIcon;
+        private ContextMenuStrip _contextMenu;
+        private Image _titleBackgroundImageLight;
+        private Image _titleBackgroundImageDark;
+        private ToolStripMenuItem _titleMenuItem;
+        public SettingsForm _settingsForm;
 
         // Initialize system tray icon and context menu
-        public static void InitializeTrayIcon()
+        public void InitializeTrayIcon()
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Mirador
             }
         }
 
-        private static void TitleMenuItem_Paint(object sender, PaintEventArgs e)
+        private void TitleMenuItem_Paint(object sender, PaintEventArgs e)
         {
             try
             {
@@ -97,11 +97,11 @@ namespace Mirador
             }
         }
 
-        private static bool _notifyIconClicked = false;
-        private static Point _lastMousePosition;
+        private bool _notifyIconClicked = false;
+        private Point _lastMousePosition;
         private const int ClickTolerance = 20; // Define a tolerance for mouse movement
 
-        private static void NotifyIcon_Click(object sender, MouseEventArgs e)
+        private void NotifyIcon_Click(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && !_notifyIconClicked)
             {
@@ -129,7 +129,7 @@ namespace Mirador
             }
         }
 
-        public static void CheckClickOutsideForm(Point currentPos)
+        public void CheckClickOutsideForm(Point currentPos)
         {
             // Check if the mouse is still close to the position it was when the icon was clicked
             // This is to prevent the form from rapidly closing and opening when the user clicks the icon again
@@ -156,7 +156,7 @@ namespace Mirador
         }
 
         // Hacky solution to open the form at icon position, not precise
-        public static void PositionFormAboveMouse(Form form, Point position)
+        public void PositionFormAboveMouse(Form form, Point position)
         {
             try
             {
@@ -193,7 +193,7 @@ namespace Mirador
             }
         }
 
-        private static void OnSettingsMenuItemClick(object sender, EventArgs e)
+        private void OnSettingsMenuItemClick(object sender, EventArgs e)
         {
             try
             {
@@ -208,7 +208,7 @@ namespace Mirador
             }
         }
 
-        private static void OnDonateMenuItemClick(object sender, EventArgs e)
+        private void OnDonateMenuItemClick(object sender, EventArgs e)
         {
             try
             {
@@ -225,7 +225,7 @@ namespace Mirador
             }
         }
 
-        private static void OnAboutMenuItemClick(object sender, EventArgs e)
+        private void OnAboutMenuItemClick(object sender, EventArgs e)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace Mirador
             }
         }
 
-        private static void OnExitMenuItemClick(object sender, EventArgs e)
+        private void OnExitMenuItemClick(object sender, EventArgs e)
         {
             try
             {
@@ -254,7 +254,7 @@ namespace Mirador
             }
         }
 
-        private static void ApplyTheme()
+        private void ApplyTheme()
         {
             try
             {
@@ -276,7 +276,7 @@ namespace Mirador
             }
         }
 
-        private static bool IsDarkModeEnabled()
+        private bool IsDarkModeEnabled()
         {
             try
             {
@@ -304,7 +304,7 @@ namespace Mirador
             }
         }
 
-        private static void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
             if (e.Category == UserPreferenceCategory.General)
             {

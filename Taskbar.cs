@@ -5,7 +5,7 @@ using System.Windows.Automation;
 
 namespace Mirador
 {
-    internal class Taskbar
+    public class Taskbar
     {
         const int ABM_SETSTATE = 0xA;
         const int ABS_AUTOHIDE = 0x1;
@@ -33,6 +33,8 @@ namespace Mirador
             public int Bottom;
         }
 
+        // DllImports should be moved to NativeMethods.cs for better organization.
+
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         public static extern uint SHAppBarMessage(uint dwMessage, ref APPBARDATA pData);
 
@@ -53,11 +55,9 @@ namespace Mirador
         private static bool allowStartMenuAccessWhenHidden;
 
         private const int EDGE_THRESHOLD = 10;
-        private const int TIME_DELAY = 500; 
-        private static Point _lastMousePosition;
+        private const int AUTOHIDE_CHECK_INTERVAL = 100;
         private static DateTime _lastMouseMoveTime;
         private static System.Timers.Timer _autoHideTimer;
-        private const int CHECK_INTERVAL = 100; // Check every 100 ms
 
         public enum Corner
         {
@@ -67,6 +67,7 @@ namespace Mirador
             EntireBottom
         }
 
+        // This method checks if the mouse click happened in the taskbar tray area.
         public static bool IsClickInTaskbarTrayArea(int x, int y)
         {
             try
@@ -96,6 +97,7 @@ namespace Mirador
         }
 
         // This works with the new taskbar in Windows 11
+        // it finds the tray area and returns the rectangle so we can check if the mouse is in that region
         public static Rectangle? GetTrayArea()
         {
             // Find the desktop element
@@ -127,6 +129,7 @@ namespace Mirador
         }
 
         // Testing purposes only, might delete later
+        // This method highlights the tray area with a red overlay, used for testing purposes to see if the tray area is detected correctly and the rectangle returned is correct
         public static void HighlightTrayArea(Rectangle trayArea)
         {
             Form highlightForm = new Form
@@ -157,6 +160,9 @@ namespace Mirador
         private static bool _isAutoHideTaskbarRunning = false;
         private static readonly object _lockObject = new object();
 
+        // This method is used to auto-hide the taskbar when the mouse is not near the taskbar area or
+        // any taskbar window is in focus like the start menu, search, notification center, tray, etc.
+        // Its intended to provide a better user experience than the default auto-hide feature in Windows while providing some customization.
         public static void AutoHideTaskbar(Point mousePosition)
         {
             lock (_lockObject)
@@ -182,8 +188,8 @@ namespace Mirador
                 {
                     if (_autoHideTimer == null)
                     {
-                        _autoHideTimer = new System.Timers.Timer(CHECK_INTERVAL);
-                        Console.WriteLine($"Auto-hide timer created with interval: {CHECK_INTERVAL}");
+                        _autoHideTimer = new System.Timers.Timer(AUTOHIDE_CHECK_INTERVAL);
+                        Console.WriteLine($"Auto-hide timer created with interval: {AUTOHIDE_CHECK_INTERVAL}");
 
                         _autoHideTimer.Elapsed += (sender, args) =>
                         {
@@ -194,7 +200,7 @@ namespace Mirador
 
                                 if (!CanHideTaskbar(mousePosition, taskbarRect)) return;
 
-                                if (elapsedMilliseconds >= Properties.Settings.Default.HideDelay)
+                                if (elapsedMilliseconds >= Settings.Current.HideDelay)
                                 {
                                     if (!CanHideTaskbar(mousePosition, taskbarRect)) return;
                                     Console.WriteLine("Elapsed time meets hide delay, hiding taskbar.");
@@ -227,6 +233,19 @@ namespace Mirador
             }
         }
 
+        private static bool IsForegroundWindowInFullscreen()
+        {
+            IntPtr hWnd = GetForegroundWindow();
+            GetWindowRect(hWnd, out RECT rect);
+            Rectangle screenRect = Screen.FromHandle(hWnd).Bounds;
+
+            Console.WriteLine($"Foreground window rect: {rect}");
+            Console.WriteLine($"Screen rect: {screenRect}");
+
+            return rect.Left == screenRect.Left && rect.Top == screenRect.Top && rect.Right == screenRect.Right && rect.Bottom == screenRect.Bottom;
+        }
+
+        // This method checks if the taskbar should be hidden based on the mouse position and if any taskbar window is in focus
         private static bool CanHideTaskbar(Point mousePosition, Rectangle? taskbarRect)
         {
 
@@ -235,6 +254,8 @@ namespace Mirador
                                      !IsAnyTaskbarWindowInFocus();
         }
 
+        // This method works with the new taskbar in Windows 11.
+        // This method checks if any taskbar window is in focus like the start menu, search, notification center, tray, etc.
         public static bool IsAnyTaskbarWindowInFocus()
         {
             IntPtr focusedWnd = GetForegroundWindow();
@@ -243,97 +264,29 @@ namespace Mirador
             IntPtr searchWnd = FindWindow("Windows.UI.Core.CoreWindow", "Search");
             IntPtr taskViewWnd = FindWindow("Windows.UI.Core.CoreWindow", "Task View");
             IntPtr notificationCenterWnd = FindWindow("Windows.UI.Core.CoreWindow", "Notification Center");
-            IntPtr pinnedAppsWnd = FindWindow("Shell_TrayWnd", null);
+            IntPtr trayWnd = FindWindow("TopLevelWindowForOverflowXamlIsland", "System tray overflow window.");
+
 
             Console.WriteLine($"Focused window handle: {focusedWnd}");
             Console.WriteLine($"Start menu window handle: {startMenuWnd}");
             Console.WriteLine($"Search window handle: {searchWnd}");
             Console.WriteLine($"Task View window handle: {taskViewWnd}");
             Console.WriteLine($"Notification Center window handle: {notificationCenterWnd}");
-            Console.WriteLine($"Pinned apps window handle: {pinnedAppsWnd}");
+            Console.WriteLine($"Tray window handle: {trayWnd}");
 
             bool isInFocus = focusedWnd == startMenuWnd ||
                              focusedWnd == searchWnd ||
-                             focusedWnd == taskViewWnd ||
+                             focusedWnd == trayWnd ||
                              focusedWnd == notificationCenterWnd ||
-                             focusedWnd == pinnedAppsWnd ||
-                             IsTrayInUse() || IsNotificationCenterInUse();
+                             Program.trayMenu._settingsForm != null;
 
             Console.WriteLine($"Is any taskbar window in focus: {isInFocus}");
 
             return isInFocus;
         }
 
-        // Method to check if the tray is in use on Windows 11
-        private static bool IsTrayInUse()
-        {
-            try
-            {
-                // The handle of the element
-                IntPtr handle = new IntPtr(0x0002033C);
-
-                // Locate the element by its handle
-                AutomationElement element = AutomationElement.FromHandle(handle);
-                if (element == null)
-                {
-                    throw new InvalidOperationException("Could not find element with the specified handle.");
-                }
-
-                // Verify the class name to ensure it's the correct element
-                if (element.Current.ClassName != "Windows.UI.Composition.DesktopWindowContentBridge")
-                {
-                    throw new InvalidOperationException("Found element does not match the expected class name.");
-                }
-
-                // Check if the element is in focus
-                bool isFocused = element.Current.HasKeyboardFocus;
-
-                Console.WriteLine($"Element focus status: {isFocused}");
-
-                return isFocused;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error checking tray status: {ex.Message}");
-                return false;
-            }
-        }
-
-        // Is notification center in use ?
-        private static bool IsNotificationCenterInUse()
-        {
-            try
-            {
-                // The handle of the element
-                IntPtr handle = new IntPtr(0x00100488);
-
-                // Locate the element by its handle
-                AutomationElement element = AutomationElement.FromHandle(handle);
-                if (element == null)
-                {
-                    throw new InvalidOperationException("Could not find element with the specified handle.");
-                }
-
-                // Verify the class name to ensure it's the correct element
-                if (element.Current.ClassName != "Windows.UI.Core.CoreWindow")
-                {
-                    throw new InvalidOperationException("Found element does not match the expected class name.");
-                }
-
-                // Check if the element is in focus
-                bool isFocused = element.Current.HasKeyboardFocus;
-
-                Console.WriteLine($"Element focus status: {isFocused}");
-
-                return isFocused;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error checking tray status: {ex.Message}");
-                return false;
-            }
-        }
-
+        // This method triggers the taskbar to unhide based on the mouse position
+        // It checks if the mouse is near the bottom edge, bottom-left corner, bottom-right corner or bottom-any corner
         public static void TriggerUnhideRelativeToMousePosition(Point mousePosition)
         {
             int screenHeight = Screen.PrimaryScreen.Bounds.Height;
@@ -347,7 +300,7 @@ namespace Mirador
             Console.WriteLine($"Screen Width: {screenWidth}, Screen Height: {screenHeight}");
             Console.WriteLine($"Is Bottom: {isBottom}, Is Left Corner: {isLeftCorner}, Is Right Corner: {isRightCorner}");
 
-            var detectionRegion = Properties.Settings.Default.CursorUnhideRegion;
+            var detectionRegion = Settings.Current.CursorUnhideRegion;
 
             switch (detectionRegion)
             {
@@ -391,11 +344,16 @@ namespace Mirador
 
             SHAppBarMessage(ABM_SETSTATE, ref appBarData);
         }
-        
+
         public static void HideShowTaskbar(bool hide)
         {
+            if (IsForegroundWindowInFullscreen()) return;
+
             IntPtr taskbarWnd = FindWindow("Shell_TrayWnd", null);
             IntPtr startButtonWnd = FindWindow("Button", "Start");
+
+            const int maxRetries = 5; // Maximum number of retries
+            int retryCount = 0;
 
             if (hide)
             {
@@ -403,16 +361,28 @@ namespace Mirador
                 bool result = false;
 
                 // Ensure taskbar is hidden and ShowWindow returns true
-                SpinWait.SpinUntil(() =>
+                // If it doesn't return true, keep trying until it does or until the retry limit is reached
+                while (retryCount < maxRetries)
                 {
-                    result = ShowWindow(taskbarWnd, SW_HIDE);
-                    Console.WriteLine($"ShowWindow result: {result}");
-                    return result;
-                }, TimeSpan.FromSeconds(1));
+                    SpinWait.SpinUntil(() =>
+                    {
+                        result = ShowWindow(taskbarWnd, SW_HIDE);
+                        Console.WriteLine($"ShowWindow result: {result}");
+                        return result;
+                    }, TimeSpan.FromSeconds(1));
+
+                    if (result)
+                    {
+                        break;
+                    }
+
+                    retryCount++;
+                    Console.WriteLine($"Retry attempt: {retryCount}");
+                }
 
                 if (!result)
                 {
-                    Console.WriteLine("Failed to hide taskbar within the timeout period.");
+                    Console.WriteLine("Failed to hide taskbar within the retry limit.");
                     return;
                 }
 
