@@ -160,4 +160,34 @@
   <data name="AutoHideIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AutoHideIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="AutoHideIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AutoHideIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BothCornersIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BothCornersIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CursorIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CursorIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DesktopIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DesktopIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DoubleClickIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DoubleClickIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EntireBarIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EntireBarIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="KeyIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\KeyIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LeftCornerIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LeftCornerIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RightCornerIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\RightCornerIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TaskbarIconLight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TaskbarIconLight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

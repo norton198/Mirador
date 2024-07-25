@@ -63,6 +63,7 @@
             // btnDesktop
             // 
             btnDesktop.BackColor = Color.FromArgb(60, 60, 60);
+            btnDesktop.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnDesktop.FlatAppearance.BorderSize = 0;
             btnDesktop.FlatStyle = FlatStyle.Flat;
             btnDesktop.ForeColor = Color.White;
@@ -71,13 +72,14 @@
             btnDesktop.Name = "btnDesktop";
             btnDesktop.Size = new Size(80, 45);
             btnDesktop.TabIndex = 1;
+            toolTip.SetToolTip(btnDesktop, "Toggle Desktop Icons On Double-Click");
             btnDesktop.UseVisualStyleBackColor = false;
             btnDesktop.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnDesktop, "Toggle Desktop Icons On Double-Click");
             // 
             // btnTaskbar
             // 
             btnTaskbar.BackColor = Color.FromArgb(60, 60, 60);
+            btnTaskbar.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnTaskbar.FlatAppearance.BorderSize = 0;
             btnTaskbar.FlatStyle = FlatStyle.Flat;
             btnTaskbar.ForeColor = Color.White;
@@ -86,9 +88,9 @@
             btnTaskbar.Name = "btnTaskbar";
             btnTaskbar.Size = new Size(80, 45);
             btnTaskbar.TabIndex = 3;
+            toolTip.SetToolTip(btnTaskbar, "Toggle Taskbar Visibility Settings");
             btnTaskbar.UseVisualStyleBackColor = false;
             btnTaskbar.Click += btnTaskbar_Click;
-            toolTip.SetToolTip(btnTaskbar, "Toggle Taskbar Visibility Settings");
             // 
             // delaySlider
             // 
@@ -100,8 +102,8 @@
             delaySlider.Size = new Size(260, 45);
             delaySlider.TabIndex = 13;
             delaySlider.TickStyle = TickStyle.None;
-            delaySlider.Scroll += delaySlider_Scroll;
             toolTip.SetToolTip(delaySlider, "Adjust Auto-Hide Delay");
+            delaySlider.Scroll += delaySlider_Scroll;
             // 
             // lblDelay
             // 
@@ -158,6 +160,7 @@
             // btnAutoHide
             // 
             btnAutoHide.BackColor = Color.FromArgb(60, 60, 60);
+            btnAutoHide.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnAutoHide.FlatAppearance.BorderSize = 0;
             btnAutoHide.FlatStyle = FlatStyle.Flat;
             btnAutoHide.ForeColor = Color.White;
@@ -166,9 +169,9 @@
             btnAutoHide.Name = "btnAutoHide";
             btnAutoHide.Size = new Size(80, 45);
             btnAutoHide.TabIndex = 5;
+            toolTip.SetToolTip(btnAutoHide, "Toggle Customizable Auto-Hide Feature");
             btnAutoHide.UseVisualStyleBackColor = false;
             btnAutoHide.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnAutoHide, "Toggle Customizable Auto-Hide Feature");
             // 
             // lblTip
             // 
@@ -197,6 +200,7 @@
             // btnDoubleClick
             // 
             btnDoubleClick.BackColor = Color.FromArgb(60, 60, 60);
+            btnDoubleClick.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnDoubleClick.FlatAppearance.BorderSize = 0;
             btnDoubleClick.FlatStyle = FlatStyle.Flat;
             btnDoubleClick.ForeColor = Color.White;
@@ -205,9 +209,9 @@
             btnDoubleClick.Name = "btnDoubleClick";
             btnDoubleClick.Size = new Size(80, 45);
             btnDoubleClick.TabIndex = 1;
+            toolTip.SetToolTip(btnDoubleClick, "Toggle Hide Taskbar On Double-Click");
             btnDoubleClick.UseVisualStyleBackColor = false;
             btnDoubleClick.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnDoubleClick, "Toggle Hide Taskbar On Double-Click");
             // 
             // label1
             // 
@@ -222,6 +226,7 @@
             // btnCursor
             // 
             btnCursor.BackColor = Color.FromArgb(60, 60, 60);
+            btnCursor.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnCursor.FlatAppearance.BorderSize = 0;
             btnCursor.FlatStyle = FlatStyle.Flat;
             btnCursor.ForeColor = Color.White;
@@ -230,9 +235,9 @@
             btnCursor.Name = "btnCursor";
             btnCursor.Size = new Size(80, 45);
             btnCursor.TabIndex = 3;
+            toolTip.SetToolTip(btnCursor, "Unhide Taskbar On Cursor Settings");
             btnCursor.UseVisualStyleBackColor = false;
             btnCursor.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnCursor, "Unhide Taskbar On Cursor Settings");
             // 
             // label2
             // 
@@ -247,6 +252,7 @@
             // btnKey
             // 
             btnKey.BackColor = Color.FromArgb(60, 60, 60);
+            btnKey.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnKey.FlatAppearance.BorderSize = 0;
             btnKey.FlatStyle = FlatStyle.Flat;
             btnKey.ForeColor = Color.White;
@@ -255,9 +261,9 @@
             btnKey.Name = "btnKey";
             btnKey.Size = new Size(80, 45);
             btnKey.TabIndex = 5;
+            toolTip.SetToolTip(btnKey, "Toggle Taskbar Visiblity Control On Shortcut");
             btnKey.UseVisualStyleBackColor = false;
             btnKey.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnKey, "Toggle Taskbar Visiblity Control On Shortcut");
             // 
             // label3
             // 
@@ -301,6 +307,7 @@
             // btnShortcut
             // 
             btnShortcut.BackColor = Color.FromArgb(60, 60, 60);
+            btnShortcut.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnShortcut.FlatAppearance.BorderSize = 0;
             btnShortcut.FlatStyle = FlatStyle.Flat;
             btnShortcut.Font = new Font("Segoe UI", 12F);
@@ -310,14 +317,15 @@
             btnShortcut.Size = new Size(167, 45);
             btnShortcut.TabIndex = 9;
             btnShortcut.Text = "Shift+Tab";
+            toolTip.SetToolTip(btnShortcut, "Set Shortcut");
             btnShortcut.UseVisualStyleBackColor = false;
             btnShortcut.Visible = false;
             btnShortcut.Click += toggleButton_Click;
-            toolTip.SetToolTip(btnShortcut, "Set Shortcut");
             // 
             // btnEntireBar
             // 
             btnEntireBar.BackColor = Color.FromArgb(60, 60, 60);
+            btnEntireBar.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnEntireBar.FlatAppearance.BorderSize = 0;
             btnEntireBar.FlatStyle = FlatStyle.Flat;
             btnEntireBar.ForeColor = Color.White;
@@ -326,10 +334,10 @@
             btnEntireBar.Name = "btnEntireBar";
             btnEntireBar.Size = new Size(80, 45);
             btnEntireBar.TabIndex = 7;
+            toolTip.SetToolTip(btnEntireBar, "Entire Bar Setting");
             btnEntireBar.UseVisualStyleBackColor = false;
             btnEntireBar.Visible = false;
             btnEntireBar.Click += exclusiveButton_Click;
-            toolTip.SetToolTip(btnEntireBar, "Entire Bar Setting");
             // 
             // lblEntireBar
             // 
@@ -345,6 +353,7 @@
             // btnRightCorner
             // 
             btnRightCorner.BackColor = Color.FromArgb(60, 60, 60);
+            btnRightCorner.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnRightCorner.FlatAppearance.BorderSize = 0;
             btnRightCorner.FlatStyle = FlatStyle.Flat;
             btnRightCorner.ForeColor = Color.White;
@@ -353,10 +362,10 @@
             btnRightCorner.Name = "btnRightCorner";
             btnRightCorner.Size = new Size(80, 45);
             btnRightCorner.TabIndex = 1;
+            toolTip.SetToolTip(btnRightCorner, "Right Corner Setting");
             btnRightCorner.UseVisualStyleBackColor = false;
             btnRightCorner.Visible = false;
             btnRightCorner.Click += exclusiveButton_Click;
-            toolTip.SetToolTip(btnRightCorner, "Right Corner Setting");
             // 
             // lblRightCorner
             // 
@@ -372,6 +381,7 @@
             // btnLeftCorner
             // 
             btnLeftCorner.BackColor = Color.FromArgb(60, 60, 60);
+            btnLeftCorner.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnLeftCorner.FlatAppearance.BorderSize = 0;
             btnLeftCorner.FlatStyle = FlatStyle.Flat;
             btnLeftCorner.ForeColor = Color.White;
@@ -380,14 +390,15 @@
             btnLeftCorner.Name = "btnLeftCorner";
             btnLeftCorner.Size = new Size(80, 45);
             btnLeftCorner.TabIndex = 3;
+            toolTip.SetToolTip(btnLeftCorner, "Left Corner Setting");
             btnLeftCorner.UseVisualStyleBackColor = false;
             btnLeftCorner.Visible = false;
             btnLeftCorner.Click += exclusiveButton_Click;
-            toolTip.SetToolTip(btnLeftCorner, "Left Corner Setting");
             // 
             // btnBothCorners
             // 
             btnBothCorners.BackColor = Color.FromArgb(60, 60, 60);
+            btnBothCorners.FlatAppearance.BorderColor = SystemColors.ButtonShadow;
             btnBothCorners.FlatAppearance.BorderSize = 0;
             btnBothCorners.FlatStyle = FlatStyle.Flat;
             btnBothCorners.ForeColor = Color.White;
@@ -396,10 +407,10 @@
             btnBothCorners.Name = "btnBothCorners";
             btnBothCorners.Size = new Size(80, 45);
             btnBothCorners.TabIndex = 5;
+            toolTip.SetToolTip(btnBothCorners, "Any Corner Setting");
             btnBothCorners.UseVisualStyleBackColor = false;
             btnBothCorners.Visible = false;
             btnBothCorners.Click += exclusiveButton_Click;
-            toolTip.SetToolTip(btnBothCorners, "Any Corner Setting");
             // 
             // lblLeftCorner
             // 
