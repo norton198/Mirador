@@ -99,7 +99,7 @@ namespace Mirador
 
         private bool _notifyIconClicked = false;
         private Point _lastMousePosition;
-        private const int ClickTolerance = 20; // Define a tolerance for mouse movement
+        private const int ClickTolerance = 20; // Defines a tolerance for mouse movement
 
         private void NotifyIcon_Click(object sender, MouseEventArgs e)
         {
@@ -148,6 +148,7 @@ namespace Mirador
                 Rectangle formRectangle = new Rectangle(_settingsForm.Location, _settingsForm.Size);
                 if (!formRectangle.Contains(currentPos))
                 {
+                    Settings.Current.Save();
                     _settingsForm.Close();
                     _settingsForm = null;
                     Console.WriteLine("Closed settings form because click was outside.");
