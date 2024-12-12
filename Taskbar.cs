@@ -278,7 +278,7 @@ namespace Mirador
                              focusedWnd == searchWnd ||
                              focusedWnd == trayWnd ||
                              focusedWnd == notificationCenterWnd ||
-                             Program.trayMenu._settingsForm != null;
+                             Mirador.trayMenu._settingsForm != null;
 
             Console.WriteLine($"Is any taskbar window in focus: {isInFocus}");
 

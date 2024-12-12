@@ -431,7 +431,7 @@ namespace Mirador
                         StopListeningAnimation();
                         SetLastKnownShortcut();
                     }
-                    Program.rawInput.ListenForShortcut(isShortcutListening);
+                    Mirador.rawInput.ListenForShortcut(isShortcutListening);
                 }
             }
         }
@@ -475,7 +475,7 @@ namespace Mirador
 
         private void InitializeButtonStates()
         {
-            Program.rawInput.settingsForm = this;
+            Mirador.rawInput.settingsForm = this;
 
             // Initialize the buttons' states based on the current settings
             isDesktopToggled = Settings.Current.IsDesktopSHIconsToggled;
